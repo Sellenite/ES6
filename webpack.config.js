@@ -1,76 +1,104 @@
-/* webpack-dev-server版本太高，换成2.6.1版本就好了，我看了报错信息，babel-loader好像不能把高版本webpack-dev-server的es6，如const转换成es5，在ie就报错了 */
-var path = require('path')
-var webpack = require('webpack')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+/* eslint-disable */
+var webpack = require('webpack');
+var HappyPack = require('happypack');
+var happyThreadPool = HappyPack.ThreadPool({ size: 4 });
 
-var WEBPACK_ENV = process.env.WEBPACK_ENV || 'dev'
-
-function getHtmlConfig(name, title) {
-    return {
-        template: './src/view/' + name + '.html',
-        filename: 'view/' + name + '.html',
-        title: title,
-        inject: true,
-        hash: true,
-        // 定义js
-        chunks: ['common', name]
-    }
-}
-
-var config = {
-    // 采用多页面写法
-    entry: {
-        'common': ['./src/common/index.js'],
-        'chapter2': ['./src/page/chapter2/index.js'],
-    },
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'js/[name].js',
-        publicPath: '/dist/'
-    },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            filename: 'js/base.js'
-        }),
-        // 多个css单独打包插件
-        new ExtractTextPlugin("css/[name].css"),
-        // html模板处理，他会自动将link和script读取
-        new HtmlWebpackPlugin(getHtmlConfig('chapter2', '第二章')),
-    ],
+var commonConf = {
     module: {
-        loaders: [{
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("css-loader", "style-loader")
+        //各种加载器，即让各种文件格式可用require引用
+        loaders: [
+            {
+                test: /\.tag$/,
+                exclude: /node_modules/,
+                loader: ['babel-loader', 'riotjs-loader']
             },
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
+                exclude: /node_modules/,
+                loaders: ['happypack/loader?id=js']
             },
             {
-                test: /\.(gif|png|jpg)\??.*$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 8192,
-                    name: 'resource/images/[name].[ext]'
-                }
+                test: /\.(jpeg|jpg|png|gif)$/,
+                loader: 'url-loader?limit=10240'
+            },
+            {
+                test: /\.html$/,
+                loader: 'html-loader'
+            },
+            {
+                test: /\.json$/, loader: 'json-loader'
+            },
+            {
+                test: /\.woff(\?.+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"
+            },
+            {
+                test: /\.woff2(\?.+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"
+            },
+            {
+                test: /\.ttf(\?.+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream"
+            },
+            {
+                test: /\.eot(\?.+)?$/, loader: "file"
+            },
+            {
+                test: /\.svg(\?.+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml"
             }
         ]
     },
-    devServer: {
-        inline: true,
-        port: 8080
+    resolve: {
+        //配置别名，在项目中可缩减引用路径
+        // alias: {
+        //     jquery: srcDir + "/js/lib/jquery.min.js",
+        //     core: srcDir + "/js/core",
+        //     ui: srcDir + "/js/ui"
+        // }
     }
 };
 
-// 执行 set WEBPACK_ENV=dev 会通过的条件
-if ('dev' === WEBPACK_ENV) {
+var webpackConf = {
+    dev: {
+        devtool: "inline-source-map",  //生成sourcemap,便于开发调试
+        //devtool: "cheap-eval-source-map",  //快速打包
+        cache: true,
+        plugins: [
+            new HappyPack({
+                id: 'js',
+                cache: true,
+                verbose: false,
+                threadPool: happyThreadPool,
+                loaders: [ 'babel-loader' ]
+            }),
+        ],
+        module: commonConf.module,
+        resolve: commonConf.resolve
 
+    },
+
+    dest: {
+        devtool: false,
+        cache: false,
+        plugins: [
+            new webpack.optimize.ModuleConcatenationPlugin(),
+        ],
+        module: commonConf.module,
+        resolve: commonConf.resolve
+    }
+};
+
+try {
+    var dllref = new webpack.DllReferencePlugin({
+        context: __dirname,
+        manifest: require('./manifest.json'),
+    });
+    webpackConf.dev.plugins.unshift(dllref);
+    webpackConf.dest.plugins.unshift(dllref);
+}
+catch(e) {
+    console.log('没有生成webpack DllReferencePlugin插件所需的 manifest.json');
 }
 
-module.exports = config
+//一般来说，RD环境和QA环境打包配置和dest是一致的，但是需要不同的环境变量配置一些参数
+webpackConf.rd = Object.assign(webpackConf.dest, {});
+webpackConf.qa = Object.assign(webpackConf.dest, {});
+
+module.exports = webpackConf;
