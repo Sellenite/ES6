@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-17 11:02:30
+ * @Last Modified time: 2018-01-17 15:52:06
  */
 
 {
@@ -159,4 +159,106 @@
 
 	console.log(Number.isNaN(a)); // false，修复了
 	console.log(Number.isNaN(b)); // true
+
+	/* 判断是否NaN的更简单方法 */
+	let IsNaN = function(n) {
+		return n !== n;
+	}
+
+	console.log(IsNaN(b)); // true
+}
+
+{
+	/* 关于-0，0 === -0是true */
+	/* 数字转为字符串，-号消失；字符串转为数字，-号保留 */
+	/* JSON.stringify(-0) 返回"0"，而JSON.parse("-0") 返回-0 */
+	console.log(0 === -0); // true
+	console.log(JSON.stringify(-0), JSON.parse('-0'));
+
+	/* 判断是否为负0的方法 */
+	let isMinZero = function(n) {
+		n = Number(n);
+		return (n === 0) && (1 / n === -Infinity);
+	}
+
+	console.log(isMinZero(-0)); // true
+}
+
+{
+	/* 原生函数 */
+	// String()
+	// Number()
+	// Object()
+	// Array()
+	// Boolean()
+	// Function()
+	// RegExp()
+	// Error()
+	// Date()
+	// Symbol()
+}
+
+{
+	/* typeof new String('123')会返回object */
+	let a = new String('Hello');
+	console.log(a); // String {"Hello"}
+
+	/* 使用String.prototype.toString()能够返回string字符串 */
+	console.log(a.toString()); // "Hello"
+	console.log(String.prototype.toString.call(a)); // "Hello"
+
+	/* 与本身构造函数的valueOf()功能相同 */
+	console.log(a.valueOf()); // "Hello"
+	console.log(String.prototype.valueOf.call(a)); // "Hello"
+
+	/* Object.prototype是不同的 */
+	console.log(Object.prototype.toString.call(a)); // [object String]
+	console.log(Object.prototype.valueOf.call(a)); // String {"Hello"}
+}
+
+{
+	/* 查看一个内部属性[[class]]使用Object.prototype.toString.call() */
+	let a = new Boolean(false);
+	console.log(Object.prototype.toString.call(a)); // [object Boolean]
+}
+
+{
+	/* 想要得到封装对象的基本类型值，可以使用valueOf()函数 */
+	let a = new String('Hello');
+	console.log(a.valueOf());
+
+	/* 隐式拆封 */
+	let b = a + "";
+	console.log(b);
+}
+
+{
+	/* 当new Array的时候只传入一个数，
+	   执行的是创建一个数组，长度为10，且全为空单元（非undefined）填充 */
+	/* 空单元和undefined是有区别的，注意 */
+	let a = Array(10); // new可以省略，js会自动补加
+	console.log(a, a.length);
+
+	/* 清空一个数组可以使用array.length = 0 */
+	let b = [2, 4, 6];
+	b.length = 0;
+	console.log(b);
+
+	/* 创建一个全是undefined（非空单元）填充的数组 */
+	/* array.length这样强行修改会用空单元填充多余的空位 */
+	let c = Array.apply(null, {
+		length: 3
+	});
+	console.log(c); // [undefined, undefined, undefined]
+
+	/* 永远不要创建和使用空单元数组 */
+}
+
+{
+	// String.prototype的各类方法，不修改原字符串
+	// String#.indexOf
+	// String#.charAt
+	// String#.substr String#.substring String#.slice()
+	// String#.toUpperCase String#.toLowerCase()
+	// String#.trim
 }
