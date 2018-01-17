@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-16 17:28:46
+ * @Last Modified time: 2018-01-17 11:02:30
  */
 
 {
@@ -101,4 +101,62 @@
 	arr2.push(100);
 	arrCopy2.push(200);
 	console.log(arr, arrCopy2);
+}
+
+{
+	/* 访问字符串某个下标应该用.charAt()，老版本IE不允许string[index]这样访问 */
+	/* 以上只能够进行字符串访问，无法进行字符串修改 */
+	let string = 'foo';
+	console.log(string[0]);
+	console.log(string.charAt(2));
+}
+
+{
+	/* 数字值可用指数表示 */
+	let a = 5E10;
+	console.log(a);
+}
+
+{
+	let a = 42.59;
+	/* .toFixed()用于指定小数显示多少个 */
+	console.log(a.toFixed(4));
+	/* .toPrecision()用于指定多少个有效数位 */
+	console.log(a.toPrecision(5));
+}
+
+{
+	/* ES6，严格模式不再支持0开头的八进制数 */
+	// let a = 0363;
+	// console.log(a);  SyntaxError
+
+	/* ES6和严格模式下的八进制是用0o前缀表示 */
+	let a = 0o363;
+	console.log(a); // 243
+}
+
+{
+	/* 注意0.1+0.2不等于0.3，存在精度问题 */
+	let a = 0.1 + 0.2;
+	let b = 0.3
+	console.log(a === b) // false
+}
+
+{
+	/* NaN不与NaN相等，typeof NaN的值为'number' */
+	console.log(typeof NaN); // number
+	console.log(NaN === NaN); // false
+}
+
+{
+	/* window有一个全局方法isNaN()，但这个有bug，会将NaN和字符串也会判断为true */
+	/* ES6的Number.isNaN()修复了这个问题，他会先用typeof判断为number再执行此方法
+	（上面提到typeof NaN返回的是'number'） */
+	let a = 'foo';
+	let b = 10 / 'foo';
+	console.log(window.isNaN(a)); // true, bug
+	console.log(window.isNaN(b)); // true
+
+	console.log(Number.isNaN(a)); // false，修复了
+	console.log(Number.isNaN(b)); // true
 }

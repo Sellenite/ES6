@@ -1,218 +1,20 @@
 /*
  * @Author: yuuhei
  * @Date: 2018-01-11 13:46:05
- * @Last Modified by: Sellenite
- * @Last Modified time: 2018-01-15 20:36:17
+ * @Last Modified by:   Sellenite
+ * @Last Modified time: 2018-01-17 11:19:04
  */
 
-window.GLOBAL = 'ALL_ELEMENT';
-
 {
-    /* 回调函数参数是函数表达式，并不是函数声明 */
-    setTimeout(function timeoutHandler() {
-        console.log('global setTimeout')
-    }, 300);
-}
-
-{
-    let a = 233;
-    /* 立即执行函数第一个括号里的内容被当作函数表达式 */
-    (function () {
-        var a = 1
-        console.log('inner IIFE', a);
-    })();
-
-    /* 立即执行函数也可以拥有函数名，也可以传参 */
-    (function IIFE(a) {
-        console.log('global IIFE', a);
-    })(a);
-
-    /* 以上代码语义上等同于下面，上面的IIFE全局下是无法访问的 */
-    var IIFE = function (a) {
-        console.log('global IIFE2', a);
-    }(a);
-
-    /* UMD，将函数表达式传进IIFE的模式 */
-    (function (fn) {
-        fn(window);
-    })(function def(global) {
-        var a = 2;
-        console.log('inner UMD', a);
-        console.log('global UMD', global.GLOBAL);
-    });
-}
-
-{
-    /* var变量声明提升 */
-    (function () {
-        console.log(a); // undefined
-        var a = 2;
-    })();
-
-    /* 以上代码等同于下面 */
-    (function () {
-        var a;
-        console.log(a);
-        var a = 2;
-    })();
-
-    /* 函数声明可以提前，函数表达式的声明会像上面变量一样的提升成undefied */
-    foo();
-    function foo() {
-        console.log('foo');
-    }
-
-    /* 函数表达式提升成undefined，执行undefined会报TypeError，而不是ReferenceError */
-    try {
-        bar();
-        var bar = function () {
-            console.log('bar');
-        };
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-{
-    (function () {
-        /* 基础标准闭包 */
-        function foo() {
-            var a = 2;
-            return function () {
-                console.log(a);
-            };
-        }
-
-        var baz = foo();
-        baz();
-
-        /* 闭包循环 */
-        for (var i = 0; i < 4; i++) {
-            (function (j) {
-                setTimeout(function timeoutHandler() {
-                    console.log(j);
-                }, j * 300);
-            })(i)
-        }
-
-        /* 基本模块设计模式 */
-        function coolModule() {
-            var something = 'cool';
-            var another = [1, 2, 3];
-
-            function doSomething() {
-                console.log(something);
-            }
-
-            function doAnother() {
-                console.log(another.join('!'));
-            }
-
-            return {doSomething: doSomething, doAnother: doAnother};
-        }
-
-        var cool = coolModule();
-        cool.doAnother();
-        cool.doSomething();
-
-        /* 现代模块依赖加载器，类requireJS模式 */
-        var MyModules = (function Manager() {
-            var modules = {};
-
-            function define(name, deps, impl) {
-                for (var i = 0; i < deps.length; i++) {
-                    deps[i] = modules[deps[i]];
-                }
-                // 最主要函数，使用函数返回值执行
-                modules[name] = impl.apply(impl, deps);
-            };
-
-            function get(name) {
-                return modules[name];
-            };
-
-            return {define: define, get: get};
-        })();
-
-        MyModules.define('foo', [], function () {
-            var _this = this;
-
-            function hello() {
-                console.log(_this);
-            };
-
-            return {hello: hello};
-        })
-
-        MyModules.define('bar', ['foo'], function (foo) {
-            function hi() {
-                console.log('bar with foo');
-                foo.hello();
-            };
-
-            return {hi: hi};
-        });
-
-        var Foo = MyModules.get('foo');
-        var Bar = MyModules.get('bar');
-        Bar.hi();
-
-        /* Traceur项目try-catch解决ES6以前的级作用域 */
-        try {
-            throw undefined;
-        } catch (catchValue) {
-            // 外部无法访问或使用这个变量
-            catchValue = 2;
-            console.log('try-catch block', catchValue);
-        }
-
-        /* 显式创建块级作用域 */
-        {
-            let a = 2;
-            const readonly = 'yuuhei';
-            console.log(a, readonly)
-        }
-
-        /* bind解决setTimeout等时被绑定window为上下文 */
-        var obj = {
-            count: 1,
-            cool: function () {
-                if (this.count < 5) {
-                    setTimeout(function () {
-                        this.count++;
-                        console.log('more awesome: ', this.count);
-                    }.bind(this), this.count * 300);
-                }
-            }
-        }
-        obj.cool();
-
-        /* 箭头函数绑定前后上下文 */
-        var object = {
-            count: 3,
-            cool: function () {
-                if (this.count < 5) {
-                    setTimeout(() => {
-                        this.count++;
-                        console.log('more awesome arrow: ', this.count);
-                    }, this.count * 300);
-                }
-            }
-        }
-        object.cool();
-    })();
-}
-
-{
-    (function () {
+    (function() {
         var a = 'ALL';
         /* arguments.callee可以用来引用正在运行的函数，包括匿名函数 */
-        setTimeout(function () {
+        setTimeout(function() {
             // 该方法是一种被废弃的方案，严格模式下会报错 console.log(arguments.callee);
         }, 300);
 
         /* 在函数普通模式下直接调用默认绑定的this为全局对象window */
-        (function () {
+        (function() {
             // 在严格模式下则不会默认绑定，this为undefined use strict一定要写在第一行
             'use strict';
 
@@ -225,13 +27,13 @@ window.GLOBAL = 'ALL_ELEMENT';
         /* 函数定义在非严格模式下，即使在严格模式下调用依然被默认绑定为window */
         function foo() {
             console.log(this);
-        }(function () {
+        }(function() {
             'use strict';
             foo(); // window
         })();
 
         /* 隐式绑定例子 */
-        (function () {
+        (function() {
             function foo() {
                 console.log(this.a);
             };
@@ -245,7 +47,7 @@ window.GLOBAL = 'ALL_ELEMENT';
         })();
 
         /* 装箱 */
-        (function () {
+        (function() {
             function foo() {
                 console.log(this);
             };
@@ -255,7 +57,7 @@ window.GLOBAL = 'ALL_ELEMENT';
         })();
 
         {
-            let foo = function () {
+            let foo = function() {
                 console.log(this);
             };
 
@@ -265,7 +67,7 @@ window.GLOBAL = 'ALL_ELEMENT';
         }
 
         /* 为了避免以上情况，使用DMZ来绑定更安全的this，避免默认绑定规则 */
-        (function () {
+        (function() {
             function foo(a, b) {
                 console.log(this); // ALL
                 console.log('a: ' + a + ', b: ' + b);
@@ -277,7 +79,7 @@ window.GLOBAL = 'ALL_ELEMENT';
         })();
 
         /* 箭头函数不适用于以上几条规则 */
-        (function () {
+        (function() {
             function foo() {
                 // 返回一个箭头函数
                 return (a) => {
@@ -299,11 +101,13 @@ window.GLOBAL = 'ALL_ELEMENT';
         })();
 
         /* forEach的第二个参数可以绑定上下文，和bind效果一样 */
-        (function () {
+        (function() {
             [1, 3, 4]
-                .forEach(function (item, index) {
-                    console.log(item, this.name);
-                }, {name: 'yuuhei'});
+            .forEach(function(item, index) {
+                console.log(item, this.name);
+            }, {
+                name: 'yuuhei'
+            });
         })();
     })();
 }
@@ -377,12 +181,12 @@ window.GLOBAL = 'ALL_ELEMENT';
         enumerable: false,
         writable: false,
         configurable: true,
-        value: function () {
+        value: function() {
             var o = this;
             var index = 0;
             var keys = Object.keys(o);
             return {
-                next: function () {
+                next: function() {
                     return {
                         value: o[keys[index++]],
                         done: (index > keys.length)
@@ -401,12 +205,12 @@ window.GLOBAL = 'ALL_ELEMENT';
         a: 1,
         b: 233,
         c: 445,
-        [Symbol.iterator]: function () {
+        [Symbol.iterator]: function() {
             var o = this;
             var idx = 0;
             var ks = Object.keys(o);
             return {
-                next: function () {
+                next: function() {
                     return {
                         value: o[ks[idx++]],
                         done: (idx > ks.length)
@@ -454,9 +258,9 @@ window.GLOBAL = 'ALL_ELEMENT';
 
 {
     /* ES6拥有Object.setPrototypeOf进行原型链继承 */
-    let Foo = function () {};
+    let Foo = function() {};
     Foo.prototype.a = 1;
-    let Bar = function () {};
+    let Bar = function() {};
     Object.setPrototypeOf(Bar.prototype, Foo.prototype);
     let bar = new Bar();
     console.log(bar.a);
@@ -464,11 +268,11 @@ window.GLOBAL = 'ALL_ELEMENT';
 
 {
     /* 组合继承 */
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         /* 绑定父亲的构造属性 */
         Foo.call(this, name);
         this.age = age;
@@ -479,7 +283,7 @@ window.GLOBAL = 'ALL_ELEMENT';
 
     /* 修改过prototype后需要手动修复constructor的指向 */
     Bar.prototype.constructor = Bar;
-    Bar.prototype.myName = function () {
+    Bar.prototype.myName = function() {
         return this.name;
     };
 
@@ -524,7 +328,7 @@ window.GLOBAL = 'ALL_ELEMENT';
     /* 神奇的API设计，由于本身内部没有该函数，却能够运行，会变得怪怪的 */
     /* 面向委托模式来源于Object.create()这个特性 */
     let obj = {
-        cool: function () {
+        cool: function() {
             console.log('cool!');
         }
     };
@@ -535,11 +339,11 @@ window.GLOBAL = 'ALL_ELEMENT';
 
 {
     /* 经典类继承面向对象风格 */
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         Foo.call(this, name);
         this.age = age;
     };
@@ -554,16 +358,16 @@ window.GLOBAL = 'ALL_ELEMENT';
 {
     /* 对象委托关联风格 */
     let Foo = {
-        init: function (name) {
+        init: function(name) {
             this.name = name;
         },
-        identify: function () {
+        identify: function() {
             return `I am ${this.name}`;
         }
     };
 
     let Bar = Object.create(Foo);
-    Bar.speak = function () {
+    Bar.speak = function() {
         console.log(this.identify());
     };
 
@@ -587,7 +391,7 @@ window.GLOBAL = 'ALL_ELEMENT';
 
     // 以上实际会编译成以下方式
     let Foo1 = {
-        bar: function () {}
+        bar: function() {}
     };
 
     // 如果要想使用递归，不要使用简介方式，需要使用具名函数表达式
@@ -607,11 +411,11 @@ window.GLOBAL = 'ALL_ELEMENT';
 }
 
 {
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         Foo.call(this, name);
         this.age = age;
     };
@@ -720,7 +524,7 @@ window.GLOBAL = 'ALL_ELEMENT';
     let r1 = new Random();
     r1.rand();
 
-    Random.prototype.rand = function () {
+    Random.prototype.rand = function() {
         console.log(this.num * 1000);
     };
 
