@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-16 17:24:52
+ * @Last Modified time: 2018-01-16 17:28:46
  */
 
 {
@@ -94,4 +94,11 @@
 	arr.push(100);
 	arrCopy.push(200);
 	console.log(arr, arrCopy);
+
+	// ES6的Array.from也能够建立副本
+	let arr2 = [2, 4, 6];
+	let arrCopy2 = Array.from(arr2);
+	arr2.push(100);
+	arrCopy2.push(200);
+	console.log(arr, arrCopy2);
 }
