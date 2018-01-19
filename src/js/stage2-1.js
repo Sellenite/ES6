@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-17 15:52:06
+ * @Last Modified time: 2018-01-19 17:21:29
  */
 
 {
@@ -261,4 +261,31 @@
 	// String#.substr String#.substring String#.slice()
 	// String#.toUpperCase String#.toLowerCase()
 	// String#.trim
+}
+
+{
+	/* Symbol使用原生构造函数来定义，不用加new */
+	let myown = Symbol('deleteSomething');
+	let a = {};
+	a[Symbol('deleteSomething')] = function() {
+		/* doSomething */
+	}
+	console.log(a);
+	console.log(Object.getOwnPropertySymbols(a));
+
+	/* 具有唯一性，很多开发喜欢使用这个用于私有属性代替_function */
+}
+
+{
+	/* JSON.stringify()在遇到undefined，function，symbol这三个不安全值时，
+	   在对象会将其自动忽略，在数组中返回null，在一般调用会返回undefined */
+	console.log(JSON.stringify(undefined)); // undefined
+	console.log(JSON.stringify(function() {})); // undefinde
+	// "{"a": 2}"
+	console.log(JSON.stringify({
+		a: 2,
+		b: function() {}
+	}));
+	// "["yuuhei", null, null, 4]"
+	console.log(JSON.stringify(['yuuhei', undefined, function() {}, 4]))
 }
