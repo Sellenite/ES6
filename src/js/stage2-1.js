@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-19 17:21:29
+ * @Last Modified time: 2018-01-20 15:25:19
  */
 
 {
@@ -280,12 +280,211 @@
 	/* JSON.stringify()在遇到undefined，function，symbol这三个不安全值时，
 	   在对象会将其自动忽略，在数组中返回null，在一般调用会返回undefined */
 	console.log(JSON.stringify(undefined)); // undefined
-	console.log(JSON.stringify(function() {})); // undefinde
+	console.log(JSON.stringify(function() {})); // undefined
 	// "{"a": 2}"
 	console.log(JSON.stringify({
 		a: 2,
 		b: function() {}
 	}));
 	// "["yuuhei", null, null, 4]"
-	console.log(JSON.stringify(['yuuhei', undefined, function() {}, 4]))
+	console.log(JSON.stringify(['yuuhei', undefined, function() {}, 4]));
+}
+
+{
+	/* JSON.stringify有一个很实用的replacer，可以对数据进行筛选处理 */
+	// 可以是数组或函数
+	let obj = {
+		a: 2,
+		b: "22",
+		c: [1, 2, 3]
+	}
+	// replacer为数组时的作用
+	let json1 = JSON.stringify(obj, ["a", "b"]); // 只序列化key值为a和b的
+	console.log(json1); // "{"b":"22","c":[1,2,3]}"
+
+	// replacer为function时的作用
+	let json2 = JSON.stringify(obj, function(key, value) {
+		if (key !== "a") return value;
+	});
+	console.log(json2);
+
+	// 第三个参数space，还可以调缩进，自动进行格式化，还可以是填充字符串
+	let json3 = JSON.stringify(obj, null, 4);
+	console.log(json3);
+	// {
+	// 	  "a": 2,
+	//	  "b": "22",
+	//	  "c": [
+	//	  	  1,
+	//		  2,
+	//		  3
+	//	  ]
+	// }
+}
+
+{
+	/* 以下布尔假植在强制转换的时候结果都为false，强制转换是!! */
+	// undefined, null, fasle, +0, -0, NaN, ""
+	console.log(!!undefined || !!null || !!false || !!0 || !!NaN || !!""); // false
+	// document.all在某些IE和某些浏览器是为真值，在某些浏览器下为假值，是一个类数组
+
+	/* 假值之外都是真值，转换后都为true */
+}
+
+{
+	/* 显式强制类型转换 */
+	// 字符串和数字之间的显式转换，不要使用new，并不是创建对象
+	let a = 22;
+	let b = "3.14";
+
+	let c = String(a);
+	let d = Number(b);
+
+	console.log(c, d); // "22", 3.14
+
+	// 另一种方法的显式转换
+	let e = a.toString(); // 调用的是Number.prototype.toString
+	let f = +b;
+	console.log(e, f); // "22", 3.14
+}
+
+{
+	// 日期显示转换为数字（相当于.getTime()功能）
+	let a = new Date();
+	console.log(+a, a.getTime());
+
+	// 当实例化一个构造函数的时候如果没有参数传入，可以不加()
+	console.log(+new Date);
+
+	// ES5的Date有一个获取当前时间戳的API，其polyfill就是+new Date()
+	console.log(Date.now());
+}
+
+{
+	/* parseInt的使用 */
+
+	// parseInt针对的是字符串，要求所有字符都是数字，否则返回NaN
+	// Number()可以忽略不是数字字符的字符串，遇到非数字字符则停止转换
+	let a = '12aa45';
+	let b = '456';
+
+	console.log(parseInt(a), Number(a)); // NaN, 465
+	console.log(parseInt(b), Number(b)); // 12, 456
+}
+
+{
+	/* parseInt的第二个参数转制问题，将当前数值定义为自定义进制，不用加前缀
+	   然后转换为数字 */
+
+	// 如果需要在ES5之前的环境运行并且没有polyfill，需要手动加上第二个参数10
+	// 强制转换为十进制，不然会被转为八进制，避免不必要的坑
+
+	let a = "100";
+	let b = 256;
+
+	console.log(parseInt(a, 16)); // 256
+	console.log(parseInt(a, 8)); // 64
+	console.log(parseInt(a, 2)); // 4
+	console.log(parseInt(a, 10)); // 100
+
+	/* toString()传入参数，可以将当前数值转换为指定进制 */
+	console.log(b.toString(16)); // 100
+}
+
+{
+	/* 自定义转换 */
+
+	// 十进制数值转为自定义进制：
+	let decimalToOther = function(num, transform) {
+		/* 返回的是字符串，用于展示 */
+		var num = +num;
+		var transform = +transform;
+		if (transform === 16) {
+			return '0x' + num.toString(16);
+		} else if (transform === 8) {
+			return '0o' + num.toString(8);
+		} else {
+			return num.toString(transform);
+		}
+	}
+
+	console.log(decimalToOther(100, 8)); // "0o144"
+
+	// 其他转制转换为十进制（传入标准格式0X或0o等字符串格式）：
+	let otherToDecimal = function(num) {
+		/* 返回数字 */
+		var num = num.toLowerCase();
+		if (num.indexOf('0x') === 0) {
+			return parseInt(num.replace(/0x/, ''), 16);
+		} else if (num.indexOf('0o') === 0) {
+			return parseInt(num.replace(/0o/, ''), 8);
+		} else {
+			return parseInt(num, 10);
+		}
+	}
+
+	console.log(otherToDecimal('0x100')); // 256
+}
+
+{
+	/* boolean显示转换，建议使用!!用来转换 */
+	let a = "asd";
+	let b = [];
+	let c = {};
+
+	// 注意空数组和空对象都是返回true。是真值，所有的假值上面有提到
+	console.log(Boolean(a)); // true
+	console.log(!!b); // true
+	console.log(!!c); //true
+}
+
+{
+	let arr = [
+		2,
+		function() {},
+		4,
+		function() {}
+	];
+
+	console.log(JSON.stringify(arr));
+
+	let json = JSON.stringify(arr, function(key, value) {
+		if (typeof value === 'function') {
+			return true;
+		} else {
+			return value
+		}
+	});
+
+	console.log(json); // [2,true,4,true]
+}
+
+{
+	/* || 或 && 返回的不一定是布尔值 */
+
+	// 对于||，如果当前值判断为true，就会返回当前值
+	console.log(false || "ss" || 110); // "ss"
+
+	// 对于&&，只要有一个值判断为false，就返回判断为false的那个值，
+	// 否则返回最后一个值
+	console.log("55" && undefined && 110); // undefined
+	console.log("55" && null && 110); // null
+	console.log("55" && function() {} && 110); // 110
+
+	// 所以||会有一个常用作用：传参判断
+	let func = function(a, b) {
+		a = a || 'Hello';
+		b = b || 'World';
+		return a + " " + b;
+	}
+	console.log(func('Hi')); // Hi World
+	console.log(func('Hi', "")); // 注意这里传入了假值，结果依然是Hi World
+	console.log(func('Hi', " ").trim()); // 传入空字符则判断为true，返回Hi
+
+	console.log(typeof "") // string，如有需求可以通过这个进行容错
+
+	// 所以&&会有一个常用作用：判断参数是否为true，是则执行一个函数
+	true && (function() {
+		console.log('this is && function!');
+	})();
 }
