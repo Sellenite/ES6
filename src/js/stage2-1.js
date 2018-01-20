@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-20 15:25:19
+ * @Last Modified time: 2018-01-20 16:48:14
  */
 
 {
@@ -230,6 +230,16 @@
 	/* 隐式拆封 */
 	let b = a + "";
 	console.log(b);
+}
+
+{
+	/* 尝试对一个new String/Boolean/Number进行隐式访问，会造成强制类型转换
+	   会访问对应的构造函数原型链上的valueOf方法 */
+	let string = new String('string1');
+	// 隐式访问，实际是调用返回了String.prototype.valueOf的值，强制类型转换
+	if (string.indexOf(1) !== -1) {
+		console.log('new String direct read');
+	}
 }
 
 {
@@ -487,4 +497,26 @@
 	true && (function() {
 		console.log('this is && function!');
 	})();
+}
+
+{
+	/* 注意ES6的Symbol只能够通过显式转换为字符串，使用隐式将会报错 */
+	let symbol = Symbol('symbolElement');
+	console.log(String(symbol)); // "Symbol(symbolElement)"
+
+	// symbol + "" 这样隐式转换会报错
+
+	// Symbol无法转换为数字，显示和隐式都会出错
+
+	// Symbol可以转换为boolean，隐式显式都转换为true
+	console.log(Boolean(symbol)); // true
+	console.log(!!symbol); // true
+}
+
+{
+	/* 关于==和===的使用准则 */
+
+	// 当两边有值为true和false的时候，前往不要使用==
+	// 当两边有值为[]，""，0时，尽量不要使用==
+	// 使用===是最安全的选择
 }
