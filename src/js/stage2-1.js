@@ -2,7 +2,7 @@
  * @Author: Sellenite
  * @Date:   2018-01-16 12:23:10
  * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-22 09:57:41
+ * @Last Modified time: 2018-01-22 16:57:12
  */
 
 {
@@ -240,6 +240,13 @@
 	if (string.indexOf(1) !== -1) {
 		console.log('new String direct read');
 	}
+}
+
+{
+	/* 当使用表达式+时，其中一个操作数是string（包含强制转换结果），
+	   则执行字符串拼接，否则执行数字加法 */
+	console.log([] + 1); // []被强制执行.toString，得到空字符，结果为"1"
+	console.log("4" + 1); // 41
 }
 
 {
@@ -519,4 +526,34 @@
 	// 当两边有值为true和false的时候，前往不要使用==
 	// 当两边有值为[]，""，0时，尽量不要使用==
 	// 使用===是最安全的选择
+}
+
+{
+	/* ++表达式 */
+	let a = 43;
+	let b = (a++, a);
+	console.log(b); // 正确将44赋值给b
+}
+
+{
+	/* ES6的参数预留值可以理解为使用了let，存在暂时性死区TDZ */
+	// 下面声明赋值b的时候，同时进行了访问，这样在ES6有些情况会报错
+	let testTDZ = function(a = 3, b = a + b + 3) {
+		console.log(a, b); // 不报错就输出NaN
+	}
+	// testTDZ();
+}
+
+{
+	/* 宿主变量 */
+	let div = document.createElement('div');
+	console.log(typeof div); // object
+	console.log(Object.prototype.toString.call(div)); // [object HTMLDivElement]
+	console.log(div.tagName); // DIV
+}
+
+{
+	/* 由于浏览器历史遗留问题，在创建带有id 属性的DOM 元素时也会创建同名的全局变量 */
+	// <div id="app"></div>
+	console.log(app); // 一个元素的id为app写在html，window全局对象就带有这个属性
 }
