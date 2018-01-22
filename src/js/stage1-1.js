@@ -1,6 +1,41 @@
 window.GLOBAL = 'ALL_ELEMENT';
 
 {
+    /* 永远不要使用eval，它可以执行任何传给它的字符串，很容易遭受XSS攻击 */
+    // eval在严格模式下有自己的作用域
+    let testEval = function(str, b) {
+        // "use strict"; 使用这句后会报ReferenceError，a is not defined
+        eval(str); // 欺诈行为
+        console.log(a, b);
+    }
+
+    testEval("var a = 2;", 4); // 2, 4 顺利改写a
+}
+
+{
+    /* 永远不要使用with进行对象赋值，操作不当很有可能泄漏都全局变量 */
+    // with在严格模式下被完全禁止，以下代码为泄漏全局变量的例子，在非严格模式下执行
+    /*
+    let testWith = function(obj) {
+        with(obj) {
+            _a = 'with revise successfully';
+        }
+    }
+
+    let obj1 = {
+        "_a": 233
+    };
+    let obj2 = {
+        "_b": 445
+    };
+
+    testWith(obj1); // obj1._a = with revise successfully
+    testWith(obj2); // obj2._a = undefined
+    console.log(window._a); // with revise successfully，由于作用域问题泄漏到全局变量
+    */
+}
+
+{
     /* 回调函数参数是函数表达式，并不是函数声明 */
     setTimeout(function timeoutHandler() {
         console.log('global setTimeout')
