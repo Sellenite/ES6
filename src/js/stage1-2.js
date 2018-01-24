@@ -1,8 +1,9 @@
-/*
+/**
  * @Author: yuuhei
- * @Date: 2018-01-11 13:46:05
- * @Last Modified by:   Sellenite
- * @Last Modified time: 2018-01-17 11:19:04
+ * @Date:   2018-01-11 13:01:46
+ * @Filename: stage1-2.js
+ * @Last modified by:   yuuhei
+ * @Last modified time: 2018-01-24 13:01:42
  */
 
 {
@@ -27,7 +28,9 @@
         /* 函数定义在非严格模式下，即使在严格模式下调用依然被默认绑定为window */
         function foo() {
             console.log(this);
-        }(function() {
+        };
+
+        (function() {
             'use strict';
             foo(); // window
         })();
