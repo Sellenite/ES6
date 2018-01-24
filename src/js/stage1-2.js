@@ -1,9 +1,9 @@
 /**
  * @Author: yuuhei
- * @Date:   2018-01-11 13:01:46
+ * @Date:   2018-01-17 18:01:08
  * @Filename: stage1-2.js
  * @Last modified by:   yuuhei
- * @Last modified time: 2018-01-24 13:01:42
+ * @Last modified time: 2018-01-24 22:01:78
  */
 
 {
@@ -85,7 +85,7 @@
         (function() {
             function foo() {
                 // 返回一个箭头函数
-                return (a) => {
+                return(a) => {
                     // this继承自foo
                     console.log(this.a);
                 }
@@ -105,15 +105,12 @@
 
         /* forEach的第二个参数可以绑定上下文，和bind效果一样 */
         (function() {
-            [1, 3, 4]
-            .forEach(function(item, index) {
+            [1, 3, 4].forEach(function(item, index) {
                 console.log(item, this.name);
-            }, {
-                name: 'yuuhei'
-            });
+            }, {name: 'yuuhei'});
         })();
     })();
-}
+};
 
 {
     let arr = [
@@ -133,7 +130,7 @@
         return item % 11 !== 0;
     });
     console.log(ret);
-}
+};
 
 {
     let arr = [
@@ -153,14 +150,14 @@
         return item % 9 === 0;
     });
     console.log(ret);
-}
+};
 
 {
     let arr = [2, 4, 6];
     for (let i of arr) {
         console.log(i);
     }
-}
+};
 
 /* 数组自带迭代器，可以使用for-of遍历数组的值 */
 
@@ -168,7 +165,7 @@
     let arr = [1, 2, 3];
     let it = arr[Symbol.iterator]();
     console.log(it.next());
-}
+};
 
 /* 对象本身没有迭代器，需要模仿后才能使用for-of */
 
@@ -201,7 +198,7 @@
     for (let k of obj) {
         console.log(k);
     }
-}
+};
 
 {
     let obj = {
@@ -228,7 +225,7 @@
     console.log(it.next());
     console.log(it.next());
     console.log(it.next());
-}
+};
 
 {
     /* Object.create(obj)会将[[prototype]]关联到指定对象，继承就由于这个原理 */
@@ -238,7 +235,7 @@
 
     let obj2 = Object.create(obj);
     console.log(obj2.a)
-}
+};
 
 {
     let obj = {
@@ -257,7 +254,7 @@
 
     /* 无论enumerable是什么，in操作符都能够判断key是否在obj中，并且寻找原型链 */
     console.log('name' in obj);
-}
+};
 
 {
     /* ES6拥有Object.setPrototypeOf进行原型链继承 */
@@ -267,7 +264,7 @@
     Object.setPrototypeOf(Bar.prototype, Foo.prototype);
     let bar = new Bar();
     console.log(bar.a);
-}
+};
 
 {
     /* 组合继承 */
@@ -298,7 +295,7 @@
     console.log(bar.__proto__ === Bar.prototype);
     /* 继承也可以通过instanceof找到源头 */
     console.log(bar instanceof Foo);
-}
+};
 
 {
     /* Object.create自带第二个参数可以定义属性描述符 */
@@ -325,7 +322,7 @@
     console.log(obj2.a); // 2
     console.log(obj2.hasOwnProperty('a')); // false
     console.log(obj.hasOwnProperty('a'));
-}
+};
 
 {
     /* 神奇的API设计，由于本身内部没有该函数，却能够运行，会变得怪怪的 */
@@ -338,7 +335,7 @@
 
     let obj2 = Object.create(obj);
     obj2.cool(); // cool!
-}
+};
 
 {
     /* 经典类继承面向对象风格 */
@@ -356,7 +353,7 @@
     let bar1 = new Bar('yuuhei', 22);
     let bar2 = new Bar('Sellenite', 24);
     console.log(bar1, bar2);
-}
+};
 
 {
     /* 对象委托关联风格 */
@@ -382,7 +379,7 @@
     b2.speak();
     console.log(Bar); // {speak:f()}
     console.log(b1); // {name: 'yuuhei'}
-}
+};
 
 {
     /* 反词法 */
@@ -411,7 +408,7 @@
     };
 
     Foo2.bar();
-}
+};
 
 {
     let Foo = function(name) {
@@ -433,21 +430,15 @@
     /* 构造函数之间Foo和Bar的内省 */
     Bar.prototype instanceof Foo; // true
     Object.getPrototypeOf(Bar.prototype) === Foo.prototype; // true
-    Foo
-        .prototype
-        .isPrototypeOf(Bar.prototype); // true
+    Foo.prototype.isPrototypeOf(Bar.prototype); // true
 
     /* 实例和构造函数之间的内省 */
     bar instanceof Bar; // true
     bar instanceof Foo; // true
     Object.getPrototypeOf(bar) === Bar.prototype; /// true
-    Foo
-        .prototype
-        .isPrototypeOf(bar); // true
-    Bar
-        .prototype
-        .isPrototypeOf(bar); // true
-}
+    Foo.prototype.isPrototypeOf(bar); // true
+    Bar.prototype.isPrototypeOf(bar); // true
+};
 
 {
     /* Orbment.prototype.call(this, ...)是伪多态 */
@@ -499,18 +490,14 @@
     }
 
     let ENIGMA_I = new ARCUS('ENIGMA_I');
-    let ENIGMA_I_SIZE_MESSAGE = ENIGMA_I
-        .setSize()
-        .getMessage();
+    let ENIGMA_I_SIZE_MESSAGE = ENIGMA_I.setSize().getMessage();
 
     let ARCUS_I = new ARCUS('ARCUS_I');
-    let ARCUS_I_SIZE_MESSAGE = ARCUS_I
-        .setSize(100, 70)
-        .getMessage();
+    let ARCUS_I_SIZE_MESSAGE = ARCUS_I.setSize(100, 70).getMessage();
 
     console.log(ENIGMA_I_SIZE_MESSAGE);
     console.log(ARCUS_I_SIZE_MESSAGE);
-}
+};
 
 {
     /* class并不是静态，只是一个prototype的语法糖，使用prototype仍可修改 */
