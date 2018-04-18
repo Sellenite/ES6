@@ -172,7 +172,7 @@
 
 {
     /* 关于-0，0 === -0是true */
-    /* 数字转为字符串，-号消失；字符串转为数字，-号保留 */
+    /* 使用JSON.stringify()进行数字转为字符串，-号消失；字符串转为数字，-号保留 */
     /* JSON.stringify(-0) 返回"0"，而JSON.parse("-0") 返回-0 */
     console.log(0 === -0); // true
     console.log(JSON.stringify(-0), JSON.parse('-0'));
@@ -283,12 +283,12 @@
 {
     /* Symbol使用原生构造函数来定义，不用加new */
     let myown = Symbol('deleteSomething');
-    let a = {};
-    a[Symbol('deleteSomething')] = function() {
+    let obj = {};
+    obj[Symbol('deleteSomething')] = function() {
         /* doSomething */
     }
-    console.log(a);
-    console.log(Object.getOwnPropertySymbols(a));
+    console.log(obj);
+    console.log(Object.getOwnPropertySymbols(obj));
 
     /* 具有唯一性，很多开发喜欢使用这个用于私有属性代替_function */
 };
@@ -314,7 +314,7 @@
     }
     // replacer为数组时的作用
     let json1 = JSON.stringify(obj, ["a", "b"]); // 只序列化key值为a和b的
-    console.log(json1); // "{"b":"22","c":[1,2,3]}"
+    console.log(json1); // "{"a":2,"b":"22"}"
 
     // replacer为function时的作用
     let json2 = JSON.stringify(obj, function(key, value) {
@@ -322,7 +322,7 @@
             return value;
         }
     );
-    console.log(json2);
+    console.log(json2); // "{"b":"22","c":[1,2,3]}"
 
     // 第三个参数space，还可以调缩进，自动进行格式化，还可以是填充字符串
     let json3 = JSON.stringify(obj, null, 4);
