@@ -1,11 +1,3 @@
-/**
- * @Author: yuuhei
- * @Date:   2018-01-17 18:01:09
- * @Filename: stage2-1.js
- * @Last modified by:   yuuhei
- * @Last modified time: 2018-01-24 23:01:04
- */
-
 {
     let a = null;
     let b = {
@@ -40,9 +32,9 @@
 {
     let IIFE = 2;
     /* typeof判断当前作用域变量是否被定义 */
-    let helper = (typeof IIFE !== 'undefined')
-        ? IIFE
-        : function() {
+    let helper = (typeof IIFE !== 'undefined') ?
+        IIFE :
+        function() {
             /* somethings */
         };
     /* 使用typeof来检查变量是首选的选择 */
@@ -153,7 +145,7 @@
 {
     /* window有一个全局方法isNaN()，但这个有bug，会将NaN和字符串也会判断为true */
     /* ES6的Number.isNaN()修复了这个问题，他会先用typeof判断为number再执行此方法
-	（上面提到typeof NaN返回的是'number'） */
+    （上面提到typeof NaN返回的是'number'） */
     let a = 'foo';
     let b = 10 / 'foo';
     console.log(window.isNaN(a)); // true, bug
@@ -236,7 +228,7 @@
 
 {
     /* 尝试对一个new String/Boolean/Number进行隐式访问，会造成强制类型转换
-	   会访问对应的构造函数原型链上的valueOf方法 */
+       会访问对应的构造函数原型链上的valueOf方法 */
     let string = new String('string1');
     // 隐式访问，实际是调用返回了String.prototype.valueOf的值，强制类型转换
     if (string.indexOf(1) !== -1) {
@@ -246,14 +238,14 @@
 
 {
     /* 当使用表达式+时，其中一个操作数是string（包含强制转换结果），
-	   则执行字符串拼接，否则执行数字加法 */
+       则执行字符串拼接，否则执行数字加法 */
     console.log([] + 1); // []被强制执行.toString，得到空字符，结果为"1"
     console.log("4" + 1); // 41
 };
 
 {
     /* 当new Array的时候只传入一个数，
-	   执行的是创建一个数组，长度为10，且全为空单元（非undefined）填充 */
+       执行的是创建一个数组，长度为10，且全为空单元（非undefined）填充 */
     /* 空单元和undefined是有区别的，注意 */
     let a = Array(10); // new可以省略，js会自动补加
     console.log(a, a.length);
@@ -265,7 +257,7 @@
 
     /* 创建一个全是undefined（非空单元）填充的数组 */
     /* array.length这样强行修改会用空单元填充多余的空位 */
-    let c = Array.apply(null, {length: 3});
+    let c = Array.apply(null, { length: 3 });
     console.log(c); // [undefined, undefined, undefined]
 
     /* 永远不要创建和使用空单元数组 */
@@ -295,11 +287,11 @@
 
 {
     /* JSON.stringify()在遇到undefined，function，symbol这三个不安全值时，
-	   在对象会将其自动忽略，在数组中返回null，在一般调用会返回undefined */
+       在对象会将其自动忽略，在数组中返回null，在一般调用会返回undefined */
     console.log(JSON.stringify(undefined)); // undefined
     console.log(JSON.stringify(function() {})); // undefined
     // "{"a": 2}"
-    console.log(JSON.stringify({a: 2, b: function() {}}));
+    console.log(JSON.stringify({ a: 2, b: function() {} }));
     // "["yuuhei", null, null, 4]"
     console.log(JSON.stringify(['yuuhei', undefined, function() {}, 4]));
 };
@@ -320,21 +312,20 @@
     let json2 = JSON.stringify(obj, function(key, value) {
         if (key !== "a")
             return value;
-        }
-    );
+    });
     console.log(json2); // "{"b":"22","c":[1,2,3]}"
 
     // 第三个参数space，还可以调缩进，自动进行格式化，还可以是填充字符串
     let json3 = JSON.stringify(obj, null, 4);
     console.log(json3);
     // {
-    // 	  "a": 2,
-    //	  "b": "22",
-    //	  "c": [
-    //	  	  1,
-    //		  2,
-    //		  3
-    //	  ]
+    //    "a": 2,
+    //    "b": "22",
+    //    "c": [
+    //        1,
+    //        2,
+    //        3
+    //    ]
     // }
 };
 
@@ -360,17 +351,17 @@
 
     // 另一种方法的显式转换
     let e = a.toString(); // 调用的是Number.prototype.toString
-    let f = + b;
+    let f = +b;
     console.log(e, f); // "22", 3.14
 };
 
 {
     // 日期显示转换为数字（相当于.getTime()功能）
     let a = new Date();
-    console.log(+ a, a.getTime());
+    console.log(+a, a.getTime());
 
     // 当实例化一个构造函数的时候如果没有参数传入，可以不加()
-    console.log(+ new Date);
+    console.log(+new Date);
 
     // ES5的Date有一个获取当前时间戳的API，其polyfill就是+new Date()
     console.log(Date.now());
@@ -390,7 +381,7 @@
 
 {
     /* parseInt的第二个参数转制问题，将当前数值定义为自定义进制，不用加前缀
-	   然后转换为数字 */
+       然后转换为数字 */
 
     // 如果需要在ES5之前的环境运行并且没有polyfill，需要手动加上第二个参数10
     // 强制转换为十进制，不然会被转为八进制，避免不必要的坑
@@ -413,8 +404,8 @@
     // 十进制数值转为自定义进制：
     let decimalToOther = function(num, transform) {
         /* 返回的是字符串，用于展示 */
-        var num = + num;
-        var transform = + transform;
+        var num = +num;
+        var transform = +transform;
         if (transform === 16) {
             return '0x' + num.toString(16);
         } else if (transform === 8) {

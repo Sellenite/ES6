@@ -1,11 +1,3 @@
-/**
- * @Author: yuuhei
- * @Date:   2018-01-17 18:01:08
- * @Filename: stage1-1.js
- * @Last modified by:   yuuhei
- * @Last modified time: 2018-01-24 22:01:44
- */
-
 window.GLOBAL = 'ALL_ELEMENT';
 
 {
@@ -166,7 +158,7 @@ window.GLOBAL = 'ALL_ELEMENT';
                     console.log(another.join('!'));
                 }
 
-                return {doSomething: doSomething, doAnother: doAnother};
+                return { doSomething: doSomething, doAnother: doAnother };
             }
 
             var cool = coolModule();
@@ -189,7 +181,7 @@ window.GLOBAL = 'ALL_ELEMENT';
                     return modules[name];
                 };
 
-                return {define: define, get: get};
+                return { define: define, get: get };
             })();
 
             MyModules.define('foo', [], function() {
@@ -199,7 +191,7 @@ window.GLOBAL = 'ALL_ELEMENT';
                     console.log(_this);
                 };
 
-                return {hello: hello};
+                return { hello: hello };
             })
 
             MyModules.define('bar', ['foo'], function(foo) {
@@ -208,7 +200,7 @@ window.GLOBAL = 'ALL_ELEMENT';
                     foo.hello();
                 };
 
-                return {hi: hi};
+                return { hi: hi };
             });
 
             var Foo = MyModules.get('foo');

@@ -1,11 +1,3 @@
-/**
- * @Author: yuuhei
- * @Date:   2018-01-17 18:01:08
- * @Filename: stage1-2.js
- * @Last modified by:   yuuhei
- * @Last modified time: 2018-01-24 22:01:78
- */
-
 {
     (function() {
         var a = 'ALL';
@@ -85,7 +77,7 @@
         (function() {
             function foo() {
                 // 返回一个箭头函数
-                return(a) => {
+                return (a) => {
                     // this继承自foo
                     console.log(this.a);
                 }
@@ -107,7 +99,7 @@
         (function() {
             [1, 3, 4].forEach(function(item, index) {
                 console.log(item, this.name);
-            }, {name: 'yuuhei'});
+            }, { name: 'yuuhei' });
         })();
     })();
 };
