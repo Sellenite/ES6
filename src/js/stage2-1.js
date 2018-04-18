@@ -370,18 +370,20 @@
 {
     /* parseInt的使用 */
 
-    // parseInt针对的是字符串，要求所有字符都是数字，否则返回NaN
-    // Number()可以忽略不是数字字符的字符串，遇到非数字字符则停止转换
+    // Number()针对的是字符串，要求所有字符都是数字，否则返回NaN
+    // parseInt()可以忽略不是数字字符的字符串，遇到非数字字符则停止转换，若第一个不是数字则返回NaN
     let a = '12aa45';
     let b = '456';
+    let c = 'aa123456';
 
-    console.log(parseInt(a), Number(a)); // NaN, 465
+    console.log(parseInt(a), Number(a)); // 12, NaN
     console.log(parseInt(b), Number(b)); // 12, 456
+    console.log(parseInt(c), Number(c)); // NaN, NaN
 };
 
 {
     /* parseInt的第二个参数转制问题，将当前数值定义为自定义进制，不用加前缀
-       然后转换为数字 */
+       然后转换为数字，所有都会被转为十进制 */
 
     // 如果需要在ES5之前的环境运行并且没有polyfill，需要手动加上第二个参数10
     // 强制转换为十进制，不然会被转为八进制，避免不必要的坑
