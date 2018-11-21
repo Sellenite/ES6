@@ -133,126 +133,105 @@ window.GLOBAL = 'ALL_ELEMENT';
                 console.log(something);
             }
 
-            var baz = foo();
-            baz();
-
-            /* 闭包循环 */
-            for (var i = 0; i < 4; i++) {
-                (function (j) {
-                    setTimeout(function timeoutHandler () {
-                        console.log(j);
-                    }, j * 300);
-                })(i)
+            function doAnother () {
+                console.log(another.join('!'));
             }
 
-            /* 基本模块设计模式 */
-            function coolModule () {
-                var something = 'cool';
-                var another = [1, 2, 3];
-
-                function doSomething () {
-                    console.log(something);
-                }
-
-                function doAnother () {
-                    console.log(another.join('!'));
-                }
-
-                return { doSomething: doSomething, doAnother: doAnother };
-            }
-
-            var cool = coolModule();
-            cool.doAnother();
-            cool.doSomething();
-
-            /* 现代模块依赖加载器，类requireJS模式 */
-            var MyModules = (function Manager () {
-                var modules = {};
-
-                function define (name, deps, impl) {
-                    for (var i = 0; i < deps.length; i++) {
-                        deps[i] = modules[deps[i]];
-                    }
-                    // 最主要函数，使用函数返回值执行
-                    modules[name] = impl.apply(impl, deps);
-                };
-
-                function get (name) {
-                    return modules[name];
-                };
-
-                return { define: define, get: get };
-            })();
-
-            MyModules.define('foo', [], function () {
-                var _this = this;
-
-                function hello () {
-                    console.log(_this);
-                };
-
-                return { hello: hello };
-            })
-
-            MyModules.define('bar', ['foo'], function (foo) {
-                function hi () {
-                    console.log('bar with foo');
-                    foo.hello();
-                };
-
-                return { hi: hi };
-            });
-
-            var Foo = MyModules.get('foo');
-            var Bar = MyModules.get('bar');
-            Bar.hi();
-
-        };
-
-        {
-            /* Traceur项目try-catch解决ES6以前的级作用域 */
-            try {
-                throw undefined;
-            } catch (catchValue) {
-                // 外部无法访问或使用这个变量
-                catchValue = 2;
-                console.log('try-catch block', catchValue);
-            }
-
-            /* 显式创建块级作用域 */
-            {
-                let a = 2;
-                const readonly = 'yuuhei';
-                console.log(a, readonly)
-            }
-
-            /* bind解决setTimeout等时被绑定window为上下文 */
-            var obj = {
-                count: 1,
-                cool: function () {
-                    if (this.count < 5) {
-                        setTimeout(function () {
-                            this.count++;
-                            console.log('more awesome: ', this.count);
-                        }.bind(this), this.count * 300);
-                    }
-                }
-            }
-            obj.cool();
-
-            /* 箭头函数绑定前后上下文 */
-            var object = {
-                count: 3,
-                cool: function () {
-                    if (this.count < 5) {
-                        setTimeout(() => {
-                            this.count++;
-                            console.log('more awesome arrow: ', this.count);
-                        }, this.count * 300);
-                    }
-                }
-            }
-            object.cool();
+            return { doSomething: doSomething, doAnother: doAnother };
         }
+
+        var cool = coolModule();
+        cool.doAnother();
+        cool.doSomething();
+
+        /* 现代模块依赖加载器，类requireJS模式 */
+        var MyModules = (function Manager () {
+            var modules = {};
+
+            function define (name, deps, impl) {
+                for (var i = 0; i < deps.length; i++) {
+                    deps[i] = modules[deps[i]];
+                }
+                // 最主要函数，使用函数返回值执行
+                modules[name] = impl.apply(impl, deps);
+            };
+
+            function get (name) {
+                return modules[name];
+            };
+
+            return { define: define, get: get };
+        })();
+
+        MyModules.define('foo', [], function () {
+            var _this = this;
+
+            function hello () {
+                console.log(_this);
+            };
+
+            return { hello: hello };
+        })
+
+        MyModules.define('bar', ['foo'], function (foo) {
+            function hi () {
+                console.log('bar with foo');
+                foo.hello();
+            };
+
+            return { hi: hi };
+        });
+
+        var Foo = MyModules.get('foo');
+        var Bar = MyModules.get('bar');
+        Bar.hi();
+
+    });
+
+
+    (function () {
+        /* Traceur项目try-catch解决ES6以前的级作用域 */
+        try {
+            throw undefined;
+        } catch (catchValue) {
+            // 外部无法访问或使用这个变量
+            catchValue = 2;
+            console.log('try-catch block', catchValue);
+        }
+
+        /* 显式创建块级作用域 */
+        {
+            let a = 2;
+            const readonly = 'yuuhei';
+            console.log(a, readonly)
+        }
+
+        /* bind解决setTimeout等时被绑定window为上下文 */
+        var obj = {
+            count: 1,
+            cool: function () {
+                if (this.count < 5) {
+                    setTimeout(function () {
+                        this.count++;
+                        console.log('more awesome: ', this.count);
+                    }.bind(this), this.count * 300);
+                }
+            }
+        }
+        obj.cool();
+
+        /* 箭头函数绑定前后上下文 */
+        var object = {
+            count: 3,
+            cool: function () {
+                if (this.count < 5) {
+                    setTimeout(() => {
+                        this.count++;
+                        console.log('more awesome arrow: ', this.count);
+                    }, this.count * 300);
+                }
+            }
+        }
+        object.cool();
     })();
 }
