@@ -1,104 +1,104 @@
-/* eslint-disable */
-var webpack = require('webpack');
-var HappyPack = require('happypack');
-var happyThreadPool = HappyPack.ThreadPool({ size: 4 });
+const webpack = require('webpack');
+const path = require('path');
+/** 
+ * 由于使用import加载样式时，css文件是通过js代码生成的，这就导致js在加载完成前样式会有一段白屏时间
+ * 为了解决这个问题，使用ExtractTextPlugin插件抽取独立的css样式，在style中引入
+ */
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+/**
+ * 用于使用定义html的编译模板，多页面编译的时候会使用它
+ */
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var commonConf = {
+module.exports = {
+    entry: './src/app.js',
+    output: {
+        // 输出文件
+        filename: 'js/app.js',
+        // 指定资源文件引用的目录，会加在资源路径的前面，dev-server模式时需要定义一个，线上时需要定义线上的目录
+        publicPath: '/dist/',
+        // 输出文件地址
+        path: path.resolve(__dirname, 'dist')
+    },
     module: {
-        //各种加载器，即让各种文件格式可用require引用
-        loaders: [
+        rules: [
+            // js/jsx文件的配置
             {
-                test: /\.tag$/,
-                exclude: /node_modules/,
-                loader: ['babel-loader', 'riotjs-loader']
+                test: /(\.jsx|\.js)$/,
+                exclude: /(node_modules)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        // 使用多个处理的时候，会以最右边为最开始执行的loader，然后依次向左执行
+                        presets: ['env']
+                    }
+                }
             },
+            // css文件的配置
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loaders: ['happypack/loader?id=js']
+                test: /\.css$/,
+                // 有顺序之分，首先使用use，然后再使用fallback
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
             },
+            // scss文件的配置，依赖node-sass和webpack
             {
-                test: /\.(jpeg|jpg|png|gif)$/,
-                loader: 'url-loader?limit=10240'
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'sass-loader']
+                })
             },
+            // 图片的配置，url-loader依赖file-loader
             {
-                test: /\.html$/,
-                loader: 'html-loader'
+                test: /\.(png|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            // 大于8k的时候就会用原图片，否则使用base64
+                            limit: 8192,
+                            name: 'resource/[name].[ext]'
+                        }
+                    }
+                ]
             },
+            // 字体图标的配置
             {
-                test: /\.json$/, loader: 'json-loader'
-            },
-            {
-                test: /\.woff(\?.+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"
-            },
-            {
-                test: /\.woff2(\?.+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"
-            },
-            {
-                test: /\.ttf(\?.+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream"
-            },
-            {
-                test: /\.eot(\?.+)?$/, loader: "file"
-            },
-            {
-                test: /\.svg(\?.+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml"
+                test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192,
+                            name: 'resource/[name].[ext]'
+                        }
+                    }
+                ]
             }
         ]
     },
-    resolve: {
-        //配置别名，在项目中可缩减引用路径
-        // alias: {
-        //     jquery: srcDir + "/js/lib/jquery.min.js",
-        //     core: srcDir + "/js/core",
-        //     ui: srcDir + "/js/ui"
-        // }
+    plugins: [
+        // 处理html文件的插件
+        new HtmlWebpackPlugin({
+            template: './index.html',
+            favicon: './favicon.ico'
+        }),
+        // 处理提取独立css的插件
+        new ExtractTextPlugin('css/[name].css'),
+        // 处理提取公共模块的插件，webpack自带，引用次数大于一定次数就会被加入进来
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'common',
+            filename: 'js/base.js'
+        })
+    ],
+    devServer: {
+        // 需要配置publicPath，才能正确引用资源文件
+        port: 8081,
+        historyApiFallback: {
+            index: '/dist/index.html'
+        }
     }
 };
-
-var webpackConf = {
-    dev: {
-        devtool: "inline-source-map",  //生成sourcemap,便于开发调试
-        //devtool: "cheap-eval-source-map",  //快速打包
-        cache: true,
-        plugins: [
-            new HappyPack({
-                id: 'js',
-                cache: true,
-                verbose: false,
-                threadPool: happyThreadPool,
-                loaders: [ 'babel-loader' ]
-            }),
-        ],
-        module: commonConf.module,
-        resolve: commonConf.resolve
-
-    },
-
-    dest: {
-        devtool: false,
-        cache: false,
-        plugins: [
-            new webpack.optimize.ModuleConcatenationPlugin(),
-        ],
-        module: commonConf.module,
-        resolve: commonConf.resolve
-    }
-};
-
-try {
-    var dllref = new webpack.DllReferencePlugin({
-        context: __dirname,
-        manifest: require('./manifest.json'),
-    });
-    webpackConf.dev.plugins.unshift(dllref);
-    webpackConf.dest.plugins.unshift(dllref);
-}
-catch(e) {
-    console.log('没有生成webpack DllReferencePlugin插件所需的 manifest.json');
-}
-
-//一般来说，RD环境和QA环境打包配置和dest是一致的，但是需要不同的环境变量配置一些参数
-webpackConf.rd = Object.assign(webpackConf.dest, {});
-webpackConf.qa = Object.assign(webpackConf.dest, {});
-
-module.exports = webpackConf;
