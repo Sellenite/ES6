@@ -1,3 +1,6 @@
+/**
+ * 你不知道的JavaScript(中卷) 第一部分 类型和语法
+ */
 {
     let a = null;
     let b = {

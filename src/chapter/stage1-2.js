@@ -1,3 +1,6 @@
+/**
+ * 你不知道的JavaScript(上卷) 第二部分 this和对象原型
+ */
 {
     (function () {
         var a = 'ALL';
