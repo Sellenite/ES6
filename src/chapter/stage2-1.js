@@ -15,7 +15,7 @@
 
 {
     /* 函数对象的length是声明参数的个数 */
-    let foo = function(a, b, c) {};
+    let foo = function (a, b, c) { };
     console.log(foo.length); // 3
 };
 
@@ -34,7 +34,7 @@
     /* typeof判断当前作用域变量是否被定义 */
     let helper = (typeof IIFE !== 'undefined') ?
         IIFE :
-        function() {
+        function () {
             /* somethings */
         };
     /* 使用typeof来检查变量是首选的选择 */
@@ -43,8 +43,8 @@
 
 {
     /* 用依赖注入设计模式来验证当前作用域变量是否被定义 */
-    let helper = function(IIFE) {
-        let helper2 = IIFE || function() {
+    let helper = function (IIFE) {
+        let helper2 = IIFE || function () {
             /* somethings */
         };
     };
@@ -76,7 +76,7 @@
 {
     /* 类数组及数组副本建立 */
     // 类数组转换
-    let foo = function() {
+    let foo = function () {
         let arr = Array.prototype.slice.call(arguments);
         console.log(arr)
     }
@@ -155,7 +155,7 @@
     console.log(Number.isNaN(b)); // true
 
     /* 判断是否NaN的更简单方法 */
-    let IsNaN = function(n) {
+    let IsNaN = function (n) {
         return n !== n;
     }
 
@@ -170,7 +170,7 @@
     console.log(JSON.stringify(-0), JSON.parse('-0'));
 
     /* 判断是否为负0的方法 */
-    let isMinZero = function(n) {
+    let isMinZero = function (n) {
         n = Number(n);
         return (n === 0) && (1 / n === -Infinity);
     }
@@ -276,7 +276,7 @@
     /* Symbol使用原生构造函数来定义，不用加new */
     let myown = Symbol('deleteSomething');
     let obj = {};
-    obj[Symbol('deleteSomething')] = function() {
+    obj[Symbol('deleteSomething')] = function () {
         /* doSomething */
     }
     console.log(obj);
@@ -289,11 +289,11 @@
     /* JSON.stringify()在遇到undefined，function，symbol这三个不安全值时，
        在对象会将其自动忽略，在数组中返回null，在一般调用会返回undefined */
     console.log(JSON.stringify(undefined)); // undefined
-    console.log(JSON.stringify(function() {})); // undefined
+    console.log(JSON.stringify(function () { })); // undefined
     // "{"a": 2}"
-    console.log(JSON.stringify({ a: 2, b: function() {} }));
+    console.log(JSON.stringify({ a: 2, b: function () { } }));
     // "["yuuhei", null, null, 4]"
-    console.log(JSON.stringify(['yuuhei', undefined, function() {}, 4]));
+    console.log(JSON.stringify(['yuuhei', undefined, function () { }, 4]));
 };
 
 {
@@ -309,7 +309,7 @@
     console.log(json1); // "{"a":2,"b":"22"}"
 
     // replacer为function时的作用
-    let json2 = JSON.stringify(obj, function(key, value) {
+    let json2 = JSON.stringify(obj, function (key, value) {
         if (key !== "a")
             return value;
     });
@@ -404,7 +404,7 @@
     /* 自定义转换 */
 
     // 十进制数值转为自定义进制：
-    let decimalToOther = function(num, transform) {
+    let decimalToOther = function (num, transform) {
         /* 返回的是字符串，用于展示 */
         var num = +num;
         var transform = +transform;
@@ -420,7 +420,7 @@
     console.log(decimalToOther(100, 8)); // "0o144"
 
     // 其他转制转换为十进制（传入标准格式0X或0o等字符串格式）：
-    let otherToDecimal = function(num) {
+    let otherToDecimal = function (num) {
         /* 返回数字 */
         var num = num.toLowerCase();
         if (num.indexOf('0x') === 0) {
@@ -448,11 +448,11 @@
 };
 
 {
-    let arr = [2, function() {}, 4, function() {}];
+    let arr = [2, function () { }, 4, function () { }];
 
     console.log(JSON.stringify(arr));
 
-    let json = JSON.stringify(arr, function(key, value) {
+    let json = JSON.stringify(arr, function (key, value) {
         if (typeof value === 'function') {
             return true;
         } else {
@@ -473,10 +473,10 @@
     // 否则返回最后一个值
     console.log("55" && undefined && 110); // undefined
     console.log("55" && null && 110); // null
-    console.log("55" && function() {} && 110); // 110
+    console.log("55" && function () { } && 110); // 110
 
     // 所以||会有一个常用作用：传参判断
-    let func = function(a, b) {
+    let func = function (a, b) {
         a = a || 'Hello';
         b = b || 'World';
         return a + " " + b;
@@ -488,7 +488,7 @@
     console.log(typeof "") // string，如有需求可以通过这个进行容错
 
     // 所以&&会有一个常用作用：判断参数是否为true，是则执行一个函数
-    true && (function() {
+    true && (function () {
         console.log('this is && function!');
     })();
 };
@@ -518,14 +518,14 @@
 {
     /* ++表达式 */
     let a = 43;
-    let b = (a++, a);
+    let b = (a++ , a);
     console.log(b); // 正确将44赋值给b
 };
 
 {
     /* ES6的参数预留值可以理解为使用了let，存在暂时性死区TDZ */
     // 下面声明赋值b的时候，同时进行了访问，这样在ES6有些情况会报错
-    let testTDZ = function(a = 3, b = a + b + 3) {
+    let testTDZ = function (a = 3, b = a + b + 3) {
         console.log(a, b); // 不报错就输出NaN
     }
     // testTDZ();

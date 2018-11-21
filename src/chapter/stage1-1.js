@@ -1,12 +1,12 @@
 window.GLOBAL = 'ALL_ELEMENT';
 
 {
-    /* 永远不要使用eval，它可以执行任何传给它的字符串，很容易遭受XSS攻击 */
+    /* 提交表单时永远不要使用eval，它可以执行任何传给它的字符串，很容易遭受XSS攻击 */
     // eval在严格模式下有自己的作用域
-    let testEval = function(str, b) {
+    let testEval = function (str, b) {
         // "use strict"; 使用这句后会报ReferenceError，a is not defined
         eval(str); // 欺诈行为
-        console.log(a, b);
+        // console.log(a, b);
     }
 
     testEval("var a = 2;", 4); // 2, 4 顺利改写a
@@ -37,7 +37,7 @@ window.GLOBAL = 'ALL_ELEMENT';
 
 {
     /* 回调函数参数是函数表达式，并不是函数声明 */
-    setTimeout(function timeoutHandler() {
+    setTimeout(function timeoutHandler () {
         console.log('global setTimeout')
     }, 300);
 };
@@ -45,25 +45,25 @@ window.GLOBAL = 'ALL_ELEMENT';
 {
     let a = 233;
     /* 立即执行函数第一个括号里的内容被当作函数表达式 */
-    (function() {
+    (function () {
         var a = 1
         console.log('inner IIFE', a);
     })();
 
     /* 立即执行函数也可以拥有函数名，也可以传参 */
-    (function IIFE(a) {
+    (function IIFE (a) {
         console.log('global IIFE', a);
     })(a);
 
     /* 以上代码语义上等同于下面，上面的IIFE全局下是无法访问的 */
-    var IIFE = function(a) {
+    var IIFE = function (a) {
         console.log('global IIFE2', a);
     }(a);
 
     /* UMD，将函数表达式传进IIFE的模式 */
-    (function(fn) {
+    (function (fn) {
         fn(window);
-    })(function def(global) {
+    })(function def (global) {
         var a = 2;
         console.log('inner UMD', a);
         console.log('global UMD', global.GLOBAL);
@@ -72,13 +72,13 @@ window.GLOBAL = 'ALL_ELEMENT';
 
 {
     /* var变量声明提升 */
-    (function() {
+    (function () {
         console.log(a); // undefined
         var a = 2;
     })();
 
     /* 以上代码等同于下面 */
-    (function() {
+    (function () {
         var a;
         console.log(a);
         var a = 2;
@@ -87,14 +87,14 @@ window.GLOBAL = 'ALL_ELEMENT';
     /* 函数声明可以提前，函数表达式的声明会像上面变量一样的提升成undefied */
     foo();
 
-    function foo() {
+    function foo () {
         console.log('foo');
     }
 
     /* 函数表达式提升成undefined，执行undefined会报TypeError，而不是ReferenceError */
     try {
         bar();
-        var bar = function() {
+        var bar = function () {
             console.log('bar');
         };
     } catch (error) {
@@ -103,11 +103,11 @@ window.GLOBAL = 'ALL_ELEMENT';
 };
 
 {
-    (function() {
+    (function () {
         /* 基础标准闭包 */
-        function foo() {
+        function foo () {
             var a = 2;
-            return function() {
+            return function () {
                 console.log(a);
             };
         }
@@ -117,19 +117,19 @@ window.GLOBAL = 'ALL_ELEMENT';
 
         /* 闭包循环 */
         for (var i = 0; i < 4; i++) {
-            (function(j) {
-                setTimeout(function timeoutHandler() {
+            (function (j) {
+                setTimeout(function timeoutHandler () {
                     console.log(j);
                 }, j * 300);
             })(i)
         }
 
         /* 基本模块设计模式 */
-        function coolModule() {
+        function coolModule () {
             var something = 'cool';
             var another = [1, 2, 3];
 
-            function doSomething() {
+            function doSomething () {
                 console.log(something);
             }
 
@@ -138,23 +138,23 @@ window.GLOBAL = 'ALL_ELEMENT';
 
             /* 闭包循环 */
             for (var i = 0; i < 4; i++) {
-                (function(j) {
-                    setTimeout(function timeoutHandler() {
+                (function (j) {
+                    setTimeout(function timeoutHandler () {
                         console.log(j);
                     }, j * 300);
                 })(i)
             }
 
             /* 基本模块设计模式 */
-            function coolModule() {
+            function coolModule () {
                 var something = 'cool';
                 var another = [1, 2, 3];
 
-                function doSomething() {
+                function doSomething () {
                     console.log(something);
                 }
 
-                function doAnother() {
+                function doAnother () {
                     console.log(another.join('!'));
                 }
 
@@ -166,10 +166,10 @@ window.GLOBAL = 'ALL_ELEMENT';
             cool.doSomething();
 
             /* 现代模块依赖加载器，类requireJS模式 */
-            var MyModules = (function Manager() {
+            var MyModules = (function Manager () {
                 var modules = {};
 
-                function define(name, deps, impl) {
+                function define (name, deps, impl) {
                     for (var i = 0; i < deps.length; i++) {
                         deps[i] = modules[deps[i]];
                     }
@@ -177,25 +177,25 @@ window.GLOBAL = 'ALL_ELEMENT';
                     modules[name] = impl.apply(impl, deps);
                 };
 
-                function get(name) {
+                function get (name) {
                     return modules[name];
                 };
 
                 return { define: define, get: get };
             })();
 
-            MyModules.define('foo', [], function() {
+            MyModules.define('foo', [], function () {
                 var _this = this;
 
-                function hello() {
+                function hello () {
                     console.log(_this);
                 };
 
                 return { hello: hello };
             })
 
-            MyModules.define('bar', ['foo'], function(foo) {
-                function hi() {
+            MyModules.define('bar', ['foo'], function (foo) {
+                function hi () {
                     console.log('bar with foo');
                     foo.hello();
                 };
@@ -229,9 +229,9 @@ window.GLOBAL = 'ALL_ELEMENT';
             /* bind解决setTimeout等时被绑定window为上下文 */
             var obj = {
                 count: 1,
-                cool: function() {
+                cool: function () {
                     if (this.count < 5) {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             this.count++;
                             console.log('more awesome: ', this.count);
                         }.bind(this), this.count * 300);
@@ -243,7 +243,7 @@ window.GLOBAL = 'ALL_ELEMENT';
             /* 箭头函数绑定前后上下文 */
             var object = {
                 count: 3,
-                cool: function() {
+                cool: function () {
                     if (this.count < 5) {
                         setTimeout(() => {
                             this.count++;

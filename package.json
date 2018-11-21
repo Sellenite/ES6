@@ -1,6 +1,6 @@
 {
-  "name": "You don't know JS",
-  "version": "1.0.1",
+  "name": "es6",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,12 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/Sellenite/ES6.git"
   },
-  "keywords": [],
-  "author": "Sellenite",
+  "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Sellenite/ES6/issues"
   },
+  "homepage": "https://github.com/Sellenite/ES6#readme",
   "devDependencies": {
     "babel-core": "6.26.0",
     "babel-loader": "7.1.2",
