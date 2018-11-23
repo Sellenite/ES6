@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const autoprefixer = require('autoprefixer');
 /** 
  * 由于使用import加载样式时，css文件是通过js代码生成的，这就导致js在加载完成前样式会有一段白屏时间
  * 为了解决这个问题，使用ExtractTextPlugin插件抽取独立的css样式，在style中引入
@@ -30,7 +31,9 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         // 使用多个处理的时候，会以最右边为最开始执行的loader，然后依次向左执行
-                        presets: ['env']
+                        presets: ['env'],
+                        // 使用generator需要支持的插件，不用使用babel-polyfill，体积太大了
+                        plugins: ['transform-runtime']
                     }
                 }
             },
@@ -48,7 +51,21 @@ module.exports = {
                 test: /\.scss$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    use: ['css-loader', 'sass-loader']
+                    // postcss用于做css兼容
+                    use: ['css-loader', {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: () => [
+                                autoprefixer({
+                                    browsers: [
+                                        "> 1%",
+                                        "last 2 versions"
+                                    ]
+                                })
+                            ]
+                        }
+                    }, 'sass-loader']
                 })
             },
             // 图片的配置，url-loader依赖file-loader

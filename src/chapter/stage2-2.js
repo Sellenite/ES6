@@ -51,5 +51,33 @@
 };
 
 {
+    // generator
+    let a = 100;
+    const foo = function* () {
+        a++;
+        yield; // 暂停
+        return a;
+    }
+    let iterator = foo();
 
+    iterator.next();
+    let res = iterator.next();
+
+    console.log(res); // value, done
+
+    // iterator可传值
+    let b = 200;
+
+    const bar = function* (num) {
+        // 遇到yield表达式时，会暂停在赋值语句中间，并本质要求提供一个值
+        // 可以不设定预留值，即(yield)，不设定时默认返回的value是undefined
+        let result = num * (yield 'Hello');
+        return result;
+    }
+
+    let iterator2 = bar(10);
+    let res21 = iterator2.next(); // 函数停在yield表达式的中间，并把yield后的内容暂时作为value值
+    let res22 = iterator2.next(7); // 传值，赋值语句继续执行
+
+    console.log(res21, res22); // value: Hello, value: 70
 };
