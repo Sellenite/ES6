@@ -3,17 +3,17 @@
  */
 {
     // 分时函数，每次计时器处理一段数据，避免一次处理过多数据
-    const timeChunk = function (array = [], fn = () => { }, count = 1, interval = 200) {
+    const timeChunk = function(array = [], fn = () => { }, count = 1, interval = 200) {
         let obj, timer;
 
-        const start = function () {
+        const start = function() {
             for (let i = 0; i < Math.min(count, array.length); i++) {
                 obj = array.shift();
                 fn(obj);
             }
         }
 
-        return function () {
+        return function() {
             timer = setInterval(() => {
                 if (array.length === 0) {
                     return clearInterval(timer);
@@ -31,7 +31,7 @@
     }
 
     // 每1秒处理2个item
-    const timeChunkFn = timeChunk(dataArray, function (item) {
+    const timeChunkFn = timeChunk(dataArray, function(item) {
         resultArray.push(item * 2);
     }, 2, 1000);
 
@@ -81,3 +81,62 @@
 
     console.log(res21, res22); // value: Hello, value: 70
 };
+
+{
+    // 标准迭代器接口方法
+    const iterator = (function() {
+        let nextval;
+
+        return {
+            // for..of循环需要
+            [Symbol.iterator]: function() {
+                return this;
+            },
+            next: function() {
+                if (nextval === undefined) {
+                    nextval = 1;
+                } else {
+                    nextval = (3 * nextval) + 6
+                }
+
+                return {
+                    done: false,
+                    value: nextval
+                }
+            }
+        }
+    })();
+
+    for (let v of iterator) {
+        console.log(v);
+
+        if (v > 500) {
+            break;
+        }
+    }
+};
+
+{
+    // 使用生成器
+    const iterator = function* () {
+        let nextval;
+
+        while (true) {
+            if (nextval === undefined) {
+                nextval = 1;
+            } else {
+                nextval = (3 * nextval) + 6;
+            }
+
+            yield nextval;
+        }
+    }
+
+    for (let v of iterator()) {
+        console.log(v);
+
+        if (v > 500) {
+            break;
+        }
+    }
+}

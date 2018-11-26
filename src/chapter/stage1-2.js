@@ -14,14 +14,14 @@
             // 在严格模式下则不会默认绑定，this为undefined use strict一定要写在第一行
             'use strict';
 
-            function foo () {
+            function foo() {
                 console.log(this); // undefined
             }
             foo();
         })();
 
         /* 函数定义在非严格模式下，即使在严格模式下调用依然被默认绑定为window */
-        function foo () {
+        function foo() {
             console.log(this);
         };
 
@@ -32,7 +32,7 @@
 
         /* 隐式绑定例子 */
         (function () {
-            function foo () {
+            function foo() {
                 console.log(this.a);
             };
 
@@ -44,14 +44,21 @@
             obj.foo() // 2
         })();
 
-        /* 装箱 */
+        /**
+         * 把基本数据类型转换为对应的引用类型的操作称为装箱，把引用类型转换为基本的数据类型称为拆箱
+         * 装箱的最大作用是将值作为对象来处理
+         */
         (function () {
-            function foo () {
-                console.log(this);
+            // 简易装箱
+            function foo() {
+                return this;
             };
             foo.call(true); // Boolean {[[PrimitiveValue]]: true}
             foo.call('123'); // String {[[PrimitiveValue]]: "123"}
-            foo.call(456); // Number {[[PrimitiveValue]]: 456}
+            let num = foo.call(456); // Number {[[PrimitiveValue]]: 456}
+
+            // 简易拆箱
+            num.valueOf();
         })();
 
         {
@@ -66,7 +73,7 @@
 
         /* 为了避免以上情况，使用DMZ来绑定更安全的this，避免默认绑定规则 */
         (function () {
-            function foo (a, b) {
+            function foo(a, b) {
                 console.log(this); // ALL
                 console.log('a: ' + a + ', b: ' + b);
             }
@@ -78,7 +85,7 @@
 
         /* 箭头函数不适用于以上几条规则 */
         (function () {
-            function foo () {
+            function foo() {
                 // 返回一个箭头函数
                 return (a) => {
                     // this继承自foo
@@ -381,7 +388,7 @@
     /* ES6以下的简洁写法会编译成匿名函数，无法进行递归 */
     let Foo = {
         // 最好不要使用this.bar()或Foo.bar()执行递归，因为可用实际情况比较少
-        bar () { }
+        bar() { }
     };
 
     // 以上实际会编译成以下方式
@@ -392,7 +399,7 @@
     // 如果要想使用递归，不要使用简介方式，需要使用具名函数表达式
     let Foo2 = {
         count: 0,
-        bar: function baroooo () {
+        bar: function baroooo() {
             if (this.count < 10) {
                 console.log('loading------>' + this.count);
                 this.count++;
@@ -442,12 +449,12 @@
             this.name = name || Orbment;
             this.message = null;
         }
-        setSize (width, height) {
+        setSize(width, height) {
             this.width = width || 50;
             this.height = height || 50;
             this.message = `The ${this.name} `;
         }
-        getMessage () {
+        getMessage() {
             return this.message;
         }
     }
@@ -459,7 +466,7 @@
             this.width = width || 50;
             this.height = height || 50;
         }
-        setSize (width, height) {
+        setSize(width, height) {
             // 以前的伪多态写法：Orbment.prototype.setSize.apply(this, [width, height])
             // 注意出版书上的super(width, height)在constructor外使用已被禁止，改为替换以下方式实现相对多态
             super.setSize(width, height);
@@ -475,7 +482,7 @@
             this.width = width || 50;
             this.height = height || 50;
         }
-        setSize (width, height) {
+        setSize(width, height) {
             // 以前的伪多态写法：Orbment.prototype.setSize.apply(this, [width, height])
             // 注意出版书上的super(width, height)在constructor外使用已被禁止，改为替换以下方式实现相对多态
             super.setSize(width, height);
@@ -501,7 +508,7 @@
             this.num = Math.random();
         }
 
-        rand () {
+        rand() {
             console.log(this.num);
         }
     }
