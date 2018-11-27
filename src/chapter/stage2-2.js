@@ -65,9 +65,6 @@
 
     console.log(res); // value, done
 
-    // iterator可传值
-    let b = 200;
-
     const bar = function* (num) {
         // 遇到yield表达式时，会暂停在赋值语句中间，并本质要求提供一个值
         // 可以不设定预留值，即(yield)，不设定时默认返回的value是undefined
@@ -83,7 +80,7 @@
 };
 
 {
-    // 标准迭代器接口方法
+    // 仿标准迭代器iterator接口的写法
     const iterator = (function() {
         let nextval;
 
@@ -117,26 +114,93 @@
 };
 
 {
-    // 使用生成器
-    const iterator = function* () {
-        let nextval;
+    // 使用标准生成器generator，执行后就成为iterator
+    // iterator有next，throw和return这三个方法
+    const generator = function* () {
+        try {
+            let nextval;
 
-        while (true) {
-            if (nextval === undefined) {
-                nextval = 1;
-            } else {
-                nextval = (3 * nextval) + 6;
+            while (true) {
+                if (nextval === undefined) {
+                    nextval = 1;
+                } else {
+                    nextval = (3 * nextval) + 6;
+                }
+
+                yield nextval;
             }
-
-            yield nextval;
+        } finally {
+            console.log('Clean up');
         }
     }
 
-    for (let v of iterator()) {
+    for (let v of generator()) {
         console.log(v);
 
         if (v > 500) {
             break;
         }
     }
-}
+};
+
+{
+    // 异步迭代生成器
+    const request = function(success, delay) {
+        setTimeout(() => {
+            // 请求前会阻断同步代码，请求后才决定iterator的返回
+            if (success) {
+                it.next('iterator success');
+            } else {
+                it.throw('iterator error');
+            }
+        }, delay);
+    }
+
+    // 看起来很像async-await
+    const main = function* () {
+        // try-catch本来是无法捕获异步错误的，这里是属于同步代码，迭代器暂停
+        try {
+            let result = yield request(true, 1000);
+            console.log(result);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    let it = main();
+    it.next();
+};
+
+{
+    // 异步迭代生成器配合Promise
+    const request = function(success, delay) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (success) {
+                    resolve('Promise iterator success');
+                } else {
+                    reject('Promise iterator error');
+                }
+            }, delay);
+        });
+    }
+
+    const main = function* () {
+        try {
+            let result = yield request(true, 2000);
+            console.log(result);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const it = main();
+    // 此时value的值是一个request里返回的promise
+    const promise = it.next().value;
+
+    promise.then(res => {
+        it.next(res);
+    }, err => {
+        it.throw(err);
+    });
+};

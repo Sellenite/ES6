@@ -1,4 +1,4 @@
-import './style.scss';
+import './main.scss';
 import './chapter/stage1-1.js';
 import './chapter/stage1-2.js';
 import './chapter/stage2-1.js';

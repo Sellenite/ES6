@@ -12,6 +12,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+    devtool: false,
     entry: './src/app.js',
     output: {
         // 输出文件
@@ -100,7 +101,7 @@ module.exports = {
     plugins: [
         // 处理html文件的插件
         new HtmlWebpackPlugin({
-            template: './index.html',
+            template: './src/index.html',
             favicon: './favicon.ico'
         }),
         // 处理提取独立css的插件
@@ -109,11 +110,17 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
             filename: 'js/base.js'
+        }),
+        new webpack.SourceMapDevToolPlugin({
+            filename: 'sourcemaps/[file].map',
+            publicPath: '/dist/',
+            fileContext: 'public'
         })
     ],
     devServer: {
         // 需要配置publicPath，才能正确引用资源文件
         port: 8081,
+        // 访问404时自动指向以下页面，虽然url没有强制变化，但内容是以下页面的内容
         historyApiFallback: {
             index: '/dist/index.html'
         }
