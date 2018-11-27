@@ -258,7 +258,7 @@
         // 都是同步代码，p3是在6秒后才打印出来
         let p1 = yield request(true, 1000);
         let p2 = yield request(true, 2000);
-        let p3 = yield request(true, 3000);
+        let p3 = yield request(false, 3000);
 
         console.log(p3);
     }
@@ -267,9 +267,9 @@
 
     // 生成器的Promise并发
     const mainAll = function* () {
-        // 这样写的p1和p2是并行的，所用时间是2s+3s
-        let p1 = request('p1', 1000);
-        let p2 = request('p2', 2000);
+        // 这样写的p1和p2是并行的，首先都进行请求，然后再进行yield，所用时间是2s+3s
+        let p1 = request('p1 yield', 1000);
+        let p2 = request('p2 yield', 2000);
 
         // 并行开始，并且两者都完成了才会继续执行p3
         let r1 = yield p1;
@@ -280,4 +280,89 @@
     }
 
     run(mainAll);
+
+    // 当然也可以使用PromiseAll处理并发，换个方式
+    const mainPromiseAll = function* () {
+        let p1 = request('p1 promiseAll yield', 1000);
+        let p2 = request('p2 promiseAll yield ', 2000);
+
+        let results = yield Promise.all([p1, p2]);
+
+        let [r1, r2] = results;
+
+        let p3 = yield request(`${r1} and ${r2}`, 3000);
+        console.log(p3);
+    }
+
+    run(mainPromiseAll);
+};
+
+{
+    // 使用现有的Async-Await进行上面的操作
+    const request = function(success, delay) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (success) {
+                    if (typeof success === 'boolean') {
+                        resolve('run await success');
+                    } else {
+                        resolve(success);
+                    }
+                } else {
+                    reject('run await error');
+                }
+            }, delay);
+        });
+    }
+
+    const mainStep = async function() {
+        // 都是同步代码，p3是在6秒后才打印出来
+        let p1 = await request(true, 1000);
+        let p2 = await request(true, 2000);
+        let p3 = await request(true, 3000);
+
+        console.log(p3);
+    }
+
+    mainStep();
+
+    const mainAll = async function() {
+        // 这样写的p1和p2是并行的，首先都进行请求，然后再进行await，所用时间是2s+3s
+        let p1 = request('p1 await', 1000);
+        let p2 = request('p2 await', 2000);
+
+        // 并行开始，并且两者都完成了才会继续执行p3
+        let r1 = await p1;
+        let r2 = await p2;
+
+        let p3 = await request(`${r1} and ${r2}`, 3000);
+        console.log(p3);
+    }
+
+    mainAll();
+
+    // 当然也可以使用PromiseAll处理并发，换个方式
+    const mainPromiseAll = async function() {
+        let p1 = request('p1 promiseAll await', 1000);
+        let p2 = request('p2 promiseAll await ', 2000);
+
+        let results = await Promise.all([p1, p2]);
+
+        let [r1, r2] = results;
+
+        let p3 = await request(`${r1} and ${r2}`, 3000);
+        console.log(p3);
+    }
+
+    mainPromiseAll();
+
+    /**
+     * 这里注意，如果再使用Promise.all时，里面所有的promise进行了返回了catch，那么在Promise.all
+     * 里就就算报错了，也会走all的then，而不会走catch，如果想分别报错捕获，就在每个promise里进行
+     * catch处理并return出去，如果想只有一个报错就执行all的catch，就不要在里面写catch，注意
+     * */
+};
+
+{
+
 };
