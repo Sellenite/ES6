@@ -208,13 +208,13 @@
 {
     // 支持Promise的Generator Runner
     const run = function(gen) {
-        var args = [].slice.call(arguments, 1), it;
+        let args = [].slice.call(arguments, 1), it;
         // 在当前上下文中初始化生成器
         it = gen.apply(this, args);
         // 返回一个promise用于生成器完成
         return Promise.resolve().then(function handleNext(value) {
             // 对下一个yield出的值运行
-            var next = it.next(value);
+            let next = it.next(value);
             return (function handleResult(next) {
                 // 生成器运行完毕了吗？
                 if (next.done) {
@@ -258,7 +258,7 @@
         // 都是同步代码，p3是在6秒后才打印出来
         let p1 = yield request(true, 1000);
         let p2 = yield request(true, 2000);
-        let p3 = yield request(false, 3000);
+        let p3 = yield request(true, 3000);
 
         console.log(p3);
     }
