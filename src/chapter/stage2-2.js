@@ -204,3 +204,80 @@
         it.throw(err);
     });
 };
+
+{
+    // 支持Promise的Generator Runner
+    const run = function(gen) {
+        var args = [].slice.call(arguments, 1), it;
+        // 在当前上下文中初始化生成器
+        it = gen.apply(this, args);
+        // 返回一个promise用于生成器完成
+        return Promise.resolve().then(function handleNext(value) {
+            // 对下一个yield出的值运行
+            var next = it.next(value);
+            return (function handleResult(next) {
+                // 生成器运行完毕了吗？
+                if (next.done) {
+                    return next.value;
+                }
+                // 否则继续运行
+                else {
+                    return Promise.resolve(next.value).then(
+                        // 成功就恢复异步循环，把决议的值发回生成器
+                        handleNext,
+                        // 如果value是被拒绝的 promise，
+                        // 就把错误传回生成器进行出错处理
+                        function handleErr(err) {
+                            return Promise.resolve(
+                                it.throw(err)
+                            ).then(handleResult);
+                        }
+                    );
+                }
+            })(next);
+        });
+    }
+
+    const request = function(success, delay) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (success) {
+                    if (typeof success === 'boolean') {
+                        resolve('run iterator success');
+                    } else {
+                        resolve(success);
+                    }
+                } else {
+                    reject('run iterator error');
+                }
+            }, delay);
+        });
+    }
+
+    const mainStep = function* () {
+        // 都是同步代码，p3是在6秒后才打印出来
+        let p1 = yield request(true, 1000);
+        let p2 = yield request(true, 2000);
+        let p3 = yield request(true, 3000);
+
+        console.log(p3);
+    }
+
+    run(mainStep);
+
+    // 生成器的Promise并发
+    const mainAll = function* () {
+        // 这样写的p1和p2是并行的，所用时间是2s+3s
+        let p1 = request('p1', 1000);
+        let p2 = request('p2', 2000);
+
+        // 并行开始，并且两者都完成了才会继续执行p3
+        let r1 = yield p1;
+        let r2 = yield p2;
+
+        let p3 = yield request(`${r1} and ${r2}`, 3000);
+        console.log(p3);
+    }
+
+    run(mainAll);
+};
