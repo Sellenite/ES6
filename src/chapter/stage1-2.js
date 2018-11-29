@@ -2,15 +2,15 @@
  * 你不知道的JavaScript(上卷) 第二部分 this和对象原型
  */
 {
-    (function () {
+    (function() {
         var a = 'ALL';
         /* arguments.callee可以用来引用正在运行的函数，包括匿名函数 */
-        setTimeout(function () {
+        setTimeout(function() {
             // 该方法是一种被废弃的方案，严格模式下会报错 console.log(arguments.callee);
         }, 300);
 
         /* 在函数普通模式下直接调用默认绑定的this为全局对象window */
-        (function () {
+        (function() {
             // 在严格模式下则不会默认绑定，this为undefined use strict一定要写在第一行
             'use strict';
 
@@ -25,13 +25,13 @@
             console.log(this);
         };
 
-        (function () {
+        (function() {
             'use strict';
             foo(); // window
         })();
 
         /* 隐式绑定例子 */
-        (function () {
+        (function() {
             function foo() {
                 console.log(this.a);
             };
@@ -48,7 +48,7 @@
          * 把基本数据类型转换为对应的引用类型的操作称为装箱，把引用类型转换为基本的数据类型称为拆箱
          * 装箱的最大作用是将值作为对象来处理
          */
-        (function () {
+        (function() {
             // 简易装箱
             function foo() {
                 return this;
@@ -62,7 +62,7 @@
         })();
 
         {
-            let foo = function () {
+            let foo = function() {
                 console.log(this);
             };
 
@@ -72,7 +72,7 @@
         }
 
         /* 为了避免以上情况，使用DMZ来绑定更安全的this，避免默认绑定规则 */
-        (function () {
+        (function() {
             function foo(a, b) {
                 console.log(this); // ALL
                 console.log('a: ' + a + ', b: ' + b);
@@ -84,7 +84,7 @@
         })();
 
         /* 箭头函数不适用于以上几条规则 */
-        (function () {
+        (function() {
             function foo() {
                 // 返回一个箭头函数
                 return (a) => {
@@ -106,8 +106,8 @@
         })();
 
         /* forEach的第二个参数可以绑定上下文，和bind效果一样 */
-        (function () {
-            [1, 3, 4].forEach(function (item, index) {
+        (function() {
+            [1, 3, 4].forEach(function(item, index) {
                 console.log(item, this.name);
             }, { name: 'yuuhei' });
         })();
@@ -183,12 +183,12 @@
         enumerable: false,
         writable: false,
         configurable: true,
-        value: function () {
+        value: function() {
             var o = this;
             var index = 0;
             var keys = Object.keys(o);
             return {
-                next: function () {
+                next: function() {
                     return {
                         value: o[keys[index++]],
                         done: (index > keys.length)
@@ -207,12 +207,12 @@
         a: 1,
         b: 233,
         c: 445,
-        [Symbol.iterator]: function () {
+        [Symbol.iterator]: function() {
             var o = this;
             var idx = 0;
             var ks = Object.keys(o);
             return {
-                next: function () {
+                next: function() {
                     return {
                         value: o[ks[idx++]],
                         done: (idx > ks.length)
@@ -260,9 +260,9 @@
 
 {
     /* ES6拥有Object.setPrototypeOf进行原型链继承 */
-    let Foo = function () { };
+    let Foo = function() { };
     Foo.prototype.a = 1;
-    let Bar = function () { };
+    let Bar = function() { };
     Object.setPrototypeOf(Bar.prototype, Foo.prototype);
     let bar = new Bar();
     console.log(bar.a);
@@ -270,11 +270,11 @@
 
 {
     /* 组合继承 */
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         /* 绑定父亲的构造属性 */
         Foo.call(this, name);
         this.age = age;
@@ -285,7 +285,7 @@
 
     /* 修改过prototype后需要手动修复constructor的指向 */
     Bar.prototype.constructor = Bar;
-    Bar.prototype.myName = function () {
+    Bar.prototype.myName = function() {
         return this.name;
     };
 
@@ -330,7 +330,7 @@
     /* 神奇的API设计，由于本身内部没有该函数，却能够运行，会变得怪怪的 */
     /* 面向委托模式来源于Object.create()这个特性 */
     let obj = {
-        cool: function () {
+        cool: function() {
             console.log('cool!');
         }
     };
@@ -341,11 +341,11 @@
 
 {
     /* 经典类继承面向对象风格 */
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         Foo.call(this, name);
         this.age = age;
     };
@@ -360,16 +360,16 @@
 {
     /* 对象委托关联风格 */
     let Foo = {
-        init: function (name) {
+        init: function(name) {
             this.name = name;
         },
-        identify: function () {
+        identify: function() {
             return `I am ${this.name}`;
         }
     };
 
     let Bar = Object.create(Foo);
-    Bar.speak = function () {
+    Bar.speak = function() {
         console.log(this.identify());
     };
 
@@ -393,7 +393,7 @@
 
     // 以上实际会编译成以下方式
     let Foo1 = {
-        bar: function () { }
+        bar: function() { }
     };
 
     // 如果要想使用递归，不要使用简介方式，需要使用具名函数表达式
@@ -413,11 +413,11 @@
 };
 
 {
-    let Foo = function (name) {
+    let Foo = function(name) {
         this.name = name;
     };
 
-    let Bar = function (name, age) {
+    let Bar = function(name, age) {
         Foo.call(this, name);
         this.age = age;
     };
@@ -516,10 +516,10 @@
     let r1 = new Random();
     r1.rand();
 
-    Random.prototype.rand = function () {
+    Random.prototype.rand = function() {
         console.log(this.num * 1000);
     };
 
     let r2 = new Random();
     r2.rand();
-}
+};

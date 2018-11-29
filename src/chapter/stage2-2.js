@@ -376,7 +376,3 @@ const run = function(gen) {
 
     run(bar);
 };
-
-{
-
-};
