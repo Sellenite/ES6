@@ -376,3 +376,51 @@ const run = function(gen) {
 
     run(bar);
 };
+
+// await的Promise.all的错误捕获之一，统一在Promise.all中的catch捕获
+{
+    const doRequest1 = async () => {
+        let res = await promiseRequest(false, 1000);
+        return res;
+    }
+
+    const doRequest2 = async () => {
+        let res = await promiseRequest('await try-catch-2', 2000);
+        return res;
+    }
+
+    // doRequest1报错后接下来的请求都不会再执行，错误提示只提一遍
+    Promise.all([doRequest1(), doRequest2()]).then(res => {
+        console.log(res);
+    }).catch(err => {
+        alert(err);
+    });
+};
+
+// await的Promise.all的错误捕获之二，分别在里面的Promise都进行try-catch处理，Promise.all里的catch就不会再执行
+{
+    const doRequest1 = async () => {
+        try {
+            let res = await promiseRequest(false, 1000);
+            return res;
+        } catch (err) {
+            alert(err);
+        }
+    }
+
+    const doRequest2 = async () => {
+        try {
+            let res = await promiseRequest('await try-catch-2', 2000);
+            return res;
+        } catch (err) {
+            alert(err);
+        }
+    }
+
+    // doRequest1报错后接下来的请求也会继续执行，有多少个错误就报多少个错，只要里面每个Promise都进行了错误捕获，然后只会执行then，永远不会执行catch，因为已经捕获过了
+    Promise.all([doRequest1(), doRequest2()]).then(res => {
+        console.log(res);
+    }).catch(err => {
+        console.log('do not run here forever');
+    });
+};
