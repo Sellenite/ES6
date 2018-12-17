@@ -393,7 +393,7 @@ const run = function(gen) {
     Promise.all([doRequest1(), doRequest2()]).then(res => {
         console.log(res);
     }).catch(err => {
-        alert(err);
+        console.log(err);
     });
 };
 
@@ -404,7 +404,7 @@ const run = function(gen) {
             let res = await promiseRequest(false, 1000);
             return res;
         } catch (err) {
-            alert(err);
+            console.log(err);
         }
     }
 
@@ -413,7 +413,7 @@ const run = function(gen) {
             let res = await promiseRequest('await try-catch-2', 2000);
             return res;
         } catch (err) {
-            alert(err);
+            console.log(err);
         }
     }
 

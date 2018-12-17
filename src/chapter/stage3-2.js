@@ -81,3 +81,19 @@
     const result = fixNum`you should pay ${amt} to me`;
     console.log(result);
 };
+
+{
+    // 箭头函数没有自己的arguments，而是继承自父层
+    const foo = function() {
+        const bar = () => {
+            console.log(arguments); // Arguments [1, 2, 3, callee:(..)]
+        };
+        bar(4, 5, 6);
+    }
+
+    foo(1, 2, 3);
+};
+
+{
+
+};
