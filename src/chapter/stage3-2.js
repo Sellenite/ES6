@@ -146,3 +146,23 @@
     console.log(result1); // container
     console.log(result1 === result2); // true
 };
+
+{
+    // 符号作为键值存在于对象中时，不可被枚举，但可以被Object.getOwnPropertySymbols拿出
+    const obj = {
+        foo: 42,
+        [Symbol('foo')]: 24,
+        bar: 110
+    }
+
+    console.log(Object.getOwnPropertyNames(obj)); // ["foo", "bar"]
+    console.log(Object.getOwnPropertySymbols(obj)); // [Symbol(foo)]
+
+    // 内置符号
+    const arr = [1, 2, 3];
+    console.log(arr[Symbol.iterator]); // ƒ values() { [native code] }
+};
+
+{
+
+};
