@@ -92,8 +92,57 @@
     }
 
     foo(1, 2, 3);
+
+    // 但是仍然像普通函数一样可以通过结构来得到类似arguments的数组
+    const baz = (...args) => {
+        console.log(args);
+    }
+
+    baz(7, 8, 9); // [7, 8, 9]
 };
 
 {
+    // 箭头函数内部没有constructor方法，也没有prototype，所以不支持new操作
+    // 它对this的处理与一般的普通函数不一样，箭头函数的this始终指向函数定义时的this，不可用于构造
+    const foo = () => { };
+    const bar = new foo(); // 不要使用箭头函数做为构造函数
+}
 
+{
+    // symbol没有字面量形式，不能对Symbol使用new，他不是一个构造器，也不会创建对象
+    const sym = Symbol('some optional description');
+    // 基础类型，识别symbol的首选办法
+    console.log(typeof sym); // symbol
+    // 提供描述时会只被作为这个符号的字符串表示
+    console.log(sym.toString()); // Symbol(some optional description)
+
+    // sym不是Symbol的实例，像字符串不是String的实例一样，所以无法使用instanceof判断，需要装箱
+    console.log(sym instanceof Symbol); // false
+    console.log(Object(sym) instanceof Symbol); // true
+    // 平时判断直接使用typeof判断即可，无需再次装箱再判断
+};
+
+{
+    // 单例creator
+    const getSingle = function(fn) {
+        // 符号本身的内部值是不在代码中出现且无法获得的，所以可以作为唯一值
+        const INSTANCE = Symbol('instance');
+        // 将返回的结果绑定creator的执行环境this
+        const _this = this;
+
+        return function() {
+            return getSingle[INSTANCE] || (getSingle[INSTANCE] = fn.apply(_this, arguments));
+        }
+    };
+
+    // 执行环境
+    const container = {
+        getSingle
+    };
+
+    const creator = container.getSingle(function() { return this });
+    const result1 = creator();
+    const result2 = creator();
+    console.log(result1); // container
+    console.log(result1 === result2); // true
 };
