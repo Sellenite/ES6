@@ -164,5 +164,19 @@
 };
 
 {
+    const arr = [{ a: 1, b: 2 }, 2, 3];
+    const it = arr[Symbol.iterator]();
+
+    const map = new Map();
+    map.set('a', 4);
+    map.set('b', 5);
+
+    const it2 = map.entries();
+
+    console.log(it.next());
+    console.log(it2.next());
+};
+
+{
 
 };
