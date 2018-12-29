@@ -173,10 +173,57 @@
 
     const it2 = map.entries();
 
+    // 返回最终值，例如前面的arr的3，done依然是false的，再进行一次迭代done才是true
     console.log(it.next());
     console.log(it2.next());
 };
 
 {
+    const arr = [1, 2, 3];
+    const it = arr[Symbol.iterator]();
+    /**
+     * for-of实现原理
+     * 迭代之前都调用了 it.next()，然后查看一下 res.done，
+     * 如果 res.done 为 true，表达式求值为 false，迭代就不会发生，
+     * 这就是返回最后一个值时，返回的done仍然是true的原因，否则就直接忽略最后一个值了
+     */
+    for (let v, res; (res = it.next()) && !res.done;) {
+        v = res.value;
+        console.log(v);
+    }
+};
 
+{
+    const task = {
+        actions: [],
+        [Symbol.iterator]() {
+            let steps = this.actions.slice();
+
+            return {
+                // 使迭代器成为iterable
+                [Symbol.iterator]() { return this },
+                next(...args) {
+                    if (steps.length > 0) {
+                        let res = steps.shift()(...args);
+                        return { value: res, done: false };
+                    } else {
+                        return { value: undefined, done: true };
+                    }
+                },
+
+                return(v) {
+                    steps.length = 0;
+                    return { value: v, done: true };
+                }
+            }
+        }
+    };
+
+    task.actions.push(function(x, y) {
+        return x + y;
+    });
+
+    let it = task[Symbol.iterator]();
+
+    console.log(it.next(10, 20));
 };
