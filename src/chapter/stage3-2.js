@@ -227,3 +227,58 @@
 
     console.log(it.next(10, 20));
 };
+
+{
+    // iterator返回的value是yield后面的值
+    // 每次next都会停在yield的左边，并把yield的内容先返回为value
+    // 使用next赋值可以用作里面表达式的值进行运算
+    // next总比yield多一
+    const foo = function* () {
+        yield 1;
+        const num = 100 * (yield 2);
+        return num;
+    }
+
+    const it = foo();
+    console.log(it.next('111'));
+    console.log(it.next('222'));
+    console.log(it.next('333')); // 333000, done
+};
+
+{
+    // Regenerator原理，ES5
+    // 原来的写法：
+    const foo = function* () {
+        const x = yield 42;
+        console.log(x);
+    }
+
+    // facebook Regenerator 大概原理：
+    const bar = function() {
+        let state = 0, x;
+
+        function nextState(v) {
+            switch (state) {
+                case 0:
+                    state++;
+                    return 42;
+                case 1:
+                    state++;
+                    x = v;
+                    console.log(x);
+                    return undefined;
+            }
+        }
+
+        return {
+            next: function(v) {
+                let ret = nextState(v);
+                return { value: ret, done: state === 2 }
+            }
+        }
+    }
+
+    const it = bar();
+    console.log(it.next());
+    console.log(it.next('111'));
+};
