@@ -253,7 +253,11 @@
         console.log(x);
     }
 
-    // facebook Regenerator 大概原理：
+    const it = foo();
+    console.log(it.next());
+    console.log(it.next('111'));
+
+    // facebook Regenerator 实现iterator大概原理：
     const bar = function() {
         let state = 0, x;
 
@@ -278,7 +282,35 @@
         }
     }
 
-    const it = bar();
-    console.log(it.next());
-    console.log(it.next('111'));
+    // 与原生的iterator同样用法
+    const it2 = bar();
+    console.log(it2.next());
+    console.log(it2.next('222'));
+};
+
+{
+    class Foo {
+        constructor(a, b) {
+            this.x = a;
+            this.y = b;
+        }
+
+        getValueXY() {
+            return this.x * this.y;
+        }
+    }
+
+    class Bar extends Foo {
+        constructor(a, b, c) {
+            super(a, b);
+            this.z = c;
+        }
+
+        getValueXYZ() {
+            return super.getValueXY() * this.z;
+        }
+    }
+
+    const bar = new Bar(5, 10, 15);
+    console.log(bar);
 };

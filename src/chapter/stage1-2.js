@@ -446,7 +446,7 @@
     /* Orbment.prototype.call(this, ...)是伪多态 */
     class Orbment {
         constructor(name) {
-            this.name = name || Orbment;
+            this.name = name || 'Orbment';
             this.message = null;
         }
         setSize(width, height) {
@@ -491,7 +491,7 @@
         }
     }
 
-    let ENIGMA_I = new ARCUS('ENIGMA_I');
+    let ENIGMA_I = new ENIGMA('ENIGMA_I');
     let ENIGMA_I_SIZE_MESSAGE = ENIGMA_I.setSize().getMessage();
 
     let ARCUS_I = new ARCUS('ARCUS_I');
