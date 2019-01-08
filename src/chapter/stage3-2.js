@@ -314,3 +314,24 @@
     const bar = new Bar(5, 10, 15);
     console.log(bar);
 };
+
+{
+    // 对于map来说，通常会使用对象作为键值，因为普通对象本来就能够使用字符串
+    let x = { id: 1 };
+    let y = { id: 2 };
+    let map = new Map();
+    map.set(x, 1);
+    map.set(y, 2);
+
+    // map的keys()，values()，entries()得到的全是iterator，可以使用...进行扩展
+    const itValues = map.values();
+    // 方法从一个类似数组或可迭代对象中创建一个新的数组实例，有第二个回调参数
+    const arr1 = Array.from(itValues); // [1, 2]
+    // 也可以通过扩展运算符处理iterator
+    const arr2 = [...itValues]; // []，arr1已经将iterator迭代完毕
+    console.log(arr1, arr2, itValues);
+
+    const itKeys = map.keys();
+    const arr3 = [...itKeys]; // [{id: 1}, {id: 2}]
+    console.log(arr3);
+};
