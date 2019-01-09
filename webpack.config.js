@@ -33,8 +33,16 @@ module.exports = {
                     options: {
                         // 使用多个处理的时候，会以最右边为最开始执行的loader，然后依次向左执行
                         presets: ['env'],
-                        // 使用generator需要支持的插件，不用使用babel-polyfill，体积太大了
-                        plugins: ['transform-runtime']
+                        plugins: [
+                            // 使用generator需要支持的插件，不用使用babel-polyfill，体积太大了
+                            'transform-runtime',
+                            // babel默认不支持原生构造函数的继承，需要插件支持
+                            ["babel-plugin-transform-builtin-extend", {
+                                globals: ["Error", "Array"],
+                                // ES5 inheritance to approximate extending a class
+                                approximate: true
+                            }]
+                        ]
                     }
                 }
             },

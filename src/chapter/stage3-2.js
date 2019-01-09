@@ -335,3 +335,53 @@
     const arr3 = [...itKeys]; // [{id: 1}, {id: 2}]
     console.log(arr3);
 };
+
+{
+    // new Array时传入一个数字参数时是生成一个空数组，其length 属性为这个数字
+    // Array.of(..)可以修复这个问题
+    const arrEmpty = new Array(3);
+    console.log(arrEmpty);
+
+    const arrExist = Array.of(3);
+    console.log(arrExist);
+
+    // babel默认不支持原生构造函数的继承，需要插件支持，不然执行会找不到方法
+    class AnotherArray extends Array {
+        sum() {
+            return this.reduce((prev, curr, currIdx) => {
+                return prev + curr;
+            }, 0);
+        }
+    }
+
+    const arr = AnotherArray.of(1, 2, 3);
+    console.log(arr.sum());
+};
+
+{
+    // Array.from可以将iterator转成数组（看上面例子）
+    // 如果把类数组对象作为参数传给Array.from，它的行为方式和slice()或者apply(..)是一样的
+    const arr = [1, 2, 3];
+    const arrCopy = Array.from(arr);
+    arrCopy[1] = 4;
+    console.log(arr, arrCopy);
+
+    // Array.from转换的数组没有空槽位，是真正的undefined值，new Array(4)就有4个空槽位
+    const arrEmpty = new Array(4);
+    const arrUndefined = Array.from(arrEmpty);
+    console.log(arrEmpty, arrUndefined);
+
+    // Array.from的第二个参数，映射功能，与Array#map的功能相似
+    const arrCopyMap = Array.from(arr, (item, index) => {
+        if (item % 2 === 1) {
+            return item * 2;
+        } else {
+            return item;
+        }
+    });
+    console.log(arrCopyMap);
+};
+
+{
+
+};
