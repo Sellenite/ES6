@@ -383,5 +383,76 @@
 };
 
 {
+    /**
+     * copyWithin，
+     * 参数是 target（要复制到的索引）
+     * start（开始复制的源索引，包括在内）
+     * end（复制结束的不包含索引）
+     * 任何一个参数是负数，就被当作是相对于数组结束的相对值
+     * 会修改原数组
+     */
+    const arr = [0, 1, 2, 3, 4];
+    console.log(arr.copyWithin(3, 0, 1)); // [0, 1, 2, 0, 4]
+    [1, 2, 3, 4, 5].copyWithin(2, 1); // 结果是[1, 2, 2, 3, 4]，而不是[1, 2, 2, 2, 2]
+};
 
+{
+    const arrEmpty = new Array(4);
+    arrEmpty.fill('all');
+    const arrUndefined = Array.from(new Array(4));
+    arrUndefined.fill('part', 1, 3);
+    console.log(arrEmpty, arrUndefined);
+};
+
+{
+    // some返回的是true/false
+    const arr = [1, 3, 2, 4, 5];
+    const result = arr.some((item, index, arr) => {
+        return item === index;
+    });
+    console.log(result); // true
+
+    // find返回的是真正的数组值，找不到返回undefined
+    const num = arr.find((item, index) => {
+        return item === index;
+    });
+    console.log(num); // 2
+
+    // findIndex返回的是数组的索引值，找不到返回-1
+    const index = arr.findIndex((item, index) => {
+        return item === 5;
+    });
+    console.log(index); // 4
+
+    // find和findIndex都支持数组值是对象的复杂值
+    const arrComplex = [
+        { id: 1, value: 100 },
+        { id: 2, value: 200 }
+    ];
+
+    const obj = arrComplex.find((item, index) => {
+        return item.id === 2;
+    });
+    console.log(obj); // {id: 2, value: 200}
+
+    const num2 = arrComplex.findIndex((item, index) => {
+        return item.value === 200;
+    });
+    console.log(num2); // 1
+};
+
+{
+    // Object.is执行比 === 比较更严格的值比较，具体在于NaN和+0与-0的比较，与===不太相同
+    const x = NaN, y = +0, z = -0;
+    console.log(Object.is(x, NaN)); // true
+    console.log(Object.is(y, z)); // false
+
+    x === NaN; // false
+    y === z; // true
+};
+
+{
+    // Number.isNaN()与window.isNaN()不相同，window.isNaN()判断有问题，会将传入的参数先转为数字
+    console.log(Number.isNaN('test')) // false
+    console.log(window.isNaN('test')) // true
 };
