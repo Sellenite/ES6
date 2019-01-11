@@ -456,3 +456,42 @@
     console.log(Number.isNaN('test')) // false
     console.log(window.isNaN('test')) // true
 };
+
+{
+    /**
+     * new.target能够指向调用new的目标构造器
+     * 在普通的函数调用中（和作为构造函数来调用相对），new.target的值是undefined
+     * 这使得可以检测一个函数是否是作为构造函数通过new被调用的
+     */
+    class Parent {
+        constructor() {
+            if (new.target === Parent) {
+                // 函数有name属性
+                console.log(`${new.target.name} instantiated`);
+            } else {
+                // 继承时new.target是一个undefined值，可能是继承执行父元素的构造函数时，属于普通调用导致的
+                console.log(`Child instantiated`);
+            }
+        }
+    };
+
+    class Child extends Parent { };
+
+    const parent = new Parent();
+    const child = new Child();
+};
+
+{
+    // 定义一个只返回奇数索引值对应的值的迭代器
+    const arr = [2, 4, 6, 8, 10];
+    arr[Symbol.iterator] = function* () {
+        let idx = 1;
+        do {
+            yield this[idx];
+        } while ((idx += 2) < this.length)
+    }
+
+    for (let v of arr) {
+        console.log(v);
+    }
+};
