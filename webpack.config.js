@@ -147,10 +147,10 @@ module.exports = {
     ],
     devServer: {
         // 需要配置publicPath，才能正确引用资源文件
-        port: 8081,
+        port: 8081
         // 访问404时自动指向以下页面，虽然url没有强制变化，但内容是以下页面的内容
-        historyApiFallback: {
-            index: '/dist/html/youDontKnowJS.html'
-        }
+        // historyApiFallback: {
+        //     index: '/dist/html/youDontKnowJS.html'
+        // }
     }
 };
