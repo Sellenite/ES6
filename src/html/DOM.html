@@ -22,10 +22,16 @@
         </div>
         <div id="stage4">
             <!-- 在最后加上return false;即可阻止默认跳转行为 -->
-            <a href="https://www.baidu.com" onclick="return false;">跳转链接</a>
+            <a href="https://www.baidu.com" onclick="alert('阻止默认跳转'); return false;">跳转链接</a>
             <div class="nodeValue">test</div>
         </div>
-        <div id="stage5"></div>
+        <div id="stage5">
+            <!-- javascript:是一种伪协议，尽量不要使用这种调用函数方法 -->
+            <a href="javascript:alert('伪协议');">伪协议</a>
+            <!-- 这样同样可以阻止默认跳转 -->
+            <a href="javascript:;">伪协议阻止默认跳转</a>
+        </div>
+        <div id="stage7"></div>
     </div>
 </body>
 
