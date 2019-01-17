@@ -6,7 +6,7 @@ console.log(body.childNodes); // NodeList(5) [text, div#app, text, script, scri
 
 /** 
  * 元素节点的 nodeType 属性值是 1
- * 属性节点的 nodeType 属性值是 2
+ * 属性节点的 nodeType 属性值是 2，使用el.getAttributeNode('name')获取元素节点
  * 文本节点的 nodeType 属性值是 3
  */
 for (let i = 0; i < body.childNodes.length; i++) {
