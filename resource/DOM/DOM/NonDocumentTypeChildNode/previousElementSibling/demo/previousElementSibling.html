@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>previousElementSibling</title>
+</head>
+<body>
+<div class="wrap">
+  <!--注释 comment-->
+  <div class="child1"></div>
+  <div class="child2"></div>
+</div>
+<script>
+  (function (arr) {
+    arr.forEach(function (item) {
+      if (item.hasOwnProperty('previousElementSibling')) {
+        return;
+      }
+      Object.defineProperty(item, 'previousElementSibling', {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          var el = this;
+          while (el = el.previousSibling) {
+            if (el.nodeType === 1) {
+              return el;
+            }
+          }
+          return null;
+        },
+        set: undefined
+      });
+    });
+  })([Element.prototype, CharacterData.prototype]);
+  var log = console.log;
+  var $ = document.querySelector.bind(document);
+
+  var wrap = $('.wrap');
+  var child1 = $('.child1');
+  var child2 = $('.child2');
+
+  // 获得child2的前一个兄弟元素节点：child1（忽略了注释节点和文本节点）
+  log(child2.previousElementSibling);
+  log(child2.previousElementSibling === child1);// true
+  log(child2.previousElementSibling.nodeType); // 1
+
+  // previousElementSibling是只读的，赋值无效
+  child2.previousElementSibling = 'you';
+  log(child2.previousElementSibling);
+</script>
+</body>
+</html>

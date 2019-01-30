@@ -1,5 +1,36 @@
 const container = document.getElementById('stage7');
 
+/**
+ * 与parentNode.appendChild()的区别在于：
+ * parentNode.append()可以同时传入多个节点或字符串，没有返回值；
+ * 而parentNode.appendChild()只能传一个节点，且不直接支持传字符串(需要parentNode.appendChild(document.createTextElement('字符串'))代替)，返回追加的Node节点
+ * Polyfill:(兼容到IE9以上)，原本IE和edge不兼容append，慎用
+ * Source: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/append()/append().md
+ */
+(function(arr) {
+    arr.forEach(function(item) {
+        if (item.hasOwnProperty('append')) {
+            return;
+        }
+        Object.defineProperty(item, 'append', {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: function append() {
+                var argArr = Array.prototype.slice.call(arguments),
+                    docFrag = document.createDocumentFragment();
+
+                argArr.forEach(function(argItem) {
+                    var isNode = argItem instanceof Node;
+                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
+                });
+
+                this.appendChild(docFrag);
+            }
+        });
+    });
+})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+
 const test = () => {
     // 创建元素节点
     let para = document.createElement('p');

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>createElement</title>
+</head>
+<body>
+<script>
+  var newP = document.createElement('p');
+  newP.textContent = 'jszhou';
+
+  console.log(newP.nodeType); // => 1
+  console.log(newP.outerHTML); // => <p>jszhou</p>
+</script>
+</body>
+</html>

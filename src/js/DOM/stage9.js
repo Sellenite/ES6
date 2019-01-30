@@ -28,7 +28,6 @@ setHeaderSiblings();
 // 当浏览器不支持nth-child(odd)等css3时，使用js遍历更改样式
 const stripeTable = (type = 'odd') => {
     let tables = container.getElementsByTagName('table');
-    let arr = [];
     for (let i = 0; i < tables.length; i++) {
         let trs = tables[i].getElementsByTagName('tr');
         // 类数组标准化，除去th所在的第一行样式
@@ -50,3 +49,29 @@ const stripeTable = (type = 'odd') => {
 }
 
 stripeTable();
+
+// 模仿伪类hover
+const hoverTable = () => {
+    let tables = container.getElementsByTagName('table');
+    for (let i = 0; i < tables.length; i++) {
+        let trs = tables[i].getElementsByTagName('tr');
+        // 类数组标准化，除去th所在的第一行样式
+        trs = Array.prototype.slice.call(trs);
+        for (let j = 0; j < trs.length; j++) {
+            trs[j].addEventListener('mouseenter', function() { this.style.fontWeight = 'bold' });
+            trs[j].addEventListener('mouseleave', function() { this.style.fontWeight = 'normal' });
+        }
+    }
+}
+
+hoverTable();
+
+const addClass = (element, value) => {
+    if (!element.className) {
+        element.className = value
+    } else {
+        element.className = element.className += ` ${value}`;
+    }
+}
+
+addClass(container, 'class2');
