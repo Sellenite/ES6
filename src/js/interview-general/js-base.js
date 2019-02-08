@@ -87,3 +87,24 @@
  	};
  	console.log(a > -1); // true
  }
+
+ {
+ 	// 函数的多次bind，fn中的this永远由第一次bind决定
+ 	let a = {};
+ 	let foo = function() {
+ 		console.log(this);
+ 	}
+
+ 	foo.bind().bind(a)(); // undefined，严格模式全局this为undefiled
+
+ 	// 以上代码转换形式，原理
+ 	let fn = function() {
+ 		// 相当于第二次bind
+ 		return function() {
+ 			// 相当于第一次bind
+ 			return foo.apply();
+ 		}.apply(a);
+ 	};
+
+ 	fn();
+ };
