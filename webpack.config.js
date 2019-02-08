@@ -35,6 +35,7 @@ module.exports = {
         'common': ['./src/js/common/index.js'],
         'youDontKnowJS': ['./src/js/youDontKnowJS/index.js'],
         'DOM': ['./src/js/DOM/index.js'],
+        'interview-general': ['./src/js/interview-general/index.js'],
     },
     output: {
         // 输出文件
@@ -132,6 +133,7 @@ module.exports = {
         // 处理html文件的插件
         new HtmlWebpackPlugin(getHtmlConfig('youDontKnowJS', '你不知道的JavaScript')),
         new HtmlWebpackPlugin(getHtmlConfig('DOM', 'DOM')),
+        new HtmlWebpackPlugin(getHtmlConfig('interview-general', '前端面试之道')),
         // 处理提取独立css的插件
         new ExtractTextPlugin('css/[name].css'),
         // 处理提取公共模块的插件，webpack自带，引用次数大于一定次数就会被加入进来
