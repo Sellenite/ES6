@@ -61,7 +61,7 @@
 };
 
 {
-	/**
+    /**
      * 四则运算符转换规则：
      * 加法运算中如果其中一方是字符串，那么会把另一方转为字符串
      * 加法运算中如果都不是字符串或数字，那么会将它转为数字或字符串
@@ -69,42 +69,86 @@
      */
     console.log(1 + [1, 2, 3]); // 11,2,3
     console.log(2 * [3]); // 6
- };
+};
 
- {
- 	/**
- 	 * 比较运算符转换规则
- 	 * 如果是对象，就通过以上toPrimitive转换对象
- 	 * 如果是字符串，通过unicode字符索引比较
- 	 */
- 	const a = {
- 		valueOf() {
- 			return 0;
- 		},
- 		toString() {
- 			return '2';
- 		}
- 	};
- 	console.log(a > -1); // true
- }
+{
+    /**
+     * 比较运算符转换规则
+     * 如果是对象，就通过以上toPrimitive转换对象
+     * 如果是字符串，通过unicode字符索引比较
+     */
+    const a = {
+        valueOf() {
+            return 0;
+        },
+        toString() {
+            return '2';
+        }
+    };
+    console.log(a > -1); // true
+}
 
- {
- 	// 函数的多次bind，fn中的this永远由第一次bind决定
- 	let a = {};
- 	let foo = function() {
- 		console.log(this);
- 	}
+{
+    // 函数的多次bind，fn中的this永远由第一次bind决定
+    let a = {};
+    let foo = function() {
+        console.log(this);
+    }
 
- 	foo.bind().bind(a)(); // undefined，严格模式全局this为undefiled
+    foo.bind().bind(a)(); // undefined，严格模式全局this为undefiled
 
- 	// 以上代码转换形式，原理
- 	let fn = function() {
- 		// 相当于第二次bind
- 		return function() {
- 			// 相当于第一次bind
- 			return foo.apply();
- 		}.apply(a);
- 	};
+    // 以上代码转换形式，原理
+    let fn = function() {
+        // 相当于第二次bind
+        return function() {
+            // 相当于第一次bind
+            return foo.apply();
+        }.apply(a);
+    };
 
- 	fn();
- };
+    fn();
+};
+
+{
+    /**
+     * if判断里使用的是类型转换，而不是==
+     * 以下是==的判断规则，类型不相同的转换规则
+     * 先对比null和undefined
+     * string和number对比时，会将string转换为number再比
+     * 其中一方是boolean时，会将boolean转换为number再比
+     * 其中一方是object时，会将object转换为原始类型再比
+     */
+
+    // 以下判断步骤为：![]为false，转换number为0
+    // []为object，转换number为0
+    console.log([] == ![]); // true
+};
+
+{
+    // ES5寄生组合继承
+    const Parent = function(value) {
+        this.value = value;
+    };
+
+    Parent.prototype.getValue = function() {
+        console.log(this.value);
+    };
+
+    const Child = function(value) {
+        Parent.call(this, value);
+    };
+
+    // 第二个参数修正constructor指向为Child
+    Child.prototype = Object.create(Parent.prototype, {
+        constructor: {
+            value: Child,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+
+    const child = new Child('yuuhei');
+
+    child.getValue();
+};
