@@ -131,9 +131,9 @@ module.exports = {
     },
     plugins: [
         // 处理html文件的插件
-        new HtmlWebpackPlugin(getHtmlConfig('youDontKnowJS', '你不知道的JavaScript')),
+        new HtmlWebpackPlugin(getHtmlConfig('youDontKnowJS', 'youDontKnowJS')),
         new HtmlWebpackPlugin(getHtmlConfig('DOM', 'DOM')),
-        new HtmlWebpackPlugin(getHtmlConfig('interview-general', '前端面试之道')),
+        new HtmlWebpackPlugin(getHtmlConfig('interview-general', 'interview-general')),
         // 处理提取独立css的插件
         new ExtractTextPlugin('css/[name].css'),
         // 处理提取公共模块的插件，webpack自带，引用次数大于一定次数就会被加入进来

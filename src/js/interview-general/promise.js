@@ -3,7 +3,7 @@
      * 简易版Promise
      * 实现原理，执行从闭包带出来的resolve和reject函数
      * 然后再执行then，将函数压到执行栈中
-     * 然后第一步的异步函数执行好了，就会利用resolve或reject执行栈中的函数
+     * 然后第一步的异步函数执行好了，就会利用resolve或reject传入参数并执行栈中的函数
      */
     const PENDING = 'pending';
     const RESOLVED = 'resolved';
@@ -49,6 +49,7 @@
             this.resolvedCallbacks.push(onFulfilled);
             this.rejectedCallbacks.push(onRejected);
         }
+        // 如果在new Promise的时候就已经处理的resolve，直接执行函数
         if (this.state === RESOLVED) {
             onFulfilled(this.value);
         }
