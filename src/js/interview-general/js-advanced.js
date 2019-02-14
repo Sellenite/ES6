@@ -81,12 +81,15 @@
     };
 
     const func = function(val1, val2) {
+        this.name = val1;
         console.log(this.c, val1, val2);
     };
 
     const bindF = func.myBind(obj, '11');
+    const bindObj = new bindF('22');
 
     bindF('22');
+    console.log(bindObj);
 };
 
 {
@@ -100,7 +103,7 @@
         // 使obj得到构造函数的属性
         const result = Constructor.apply(obj, arguments);
         // 返回
-        return typeof result === 'object' ? res : obj;
+        return typeof result === 'object' ? result : obj;
     }
 
     const Obj = function(name) {
