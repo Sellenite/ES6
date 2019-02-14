@@ -1,3 +1,5 @@
+// 主要防止XSS
+
 // 一般转移字符函数（不适用于富文本编辑）
 const escapeStr = function(str) {
     str = str.replace(/&/g, '&amp;')
