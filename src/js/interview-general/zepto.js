@@ -36,7 +36,7 @@ zepto.Z.prototype = Z.prototype = $.fn;
 
 // 扩展插件
 $.fn.css = function(val) {
-	alert(val)
+	console.log(`css ${val}`);
 }
 
 $('p').html(3).css(1);

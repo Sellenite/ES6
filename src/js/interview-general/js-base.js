@@ -52,7 +52,7 @@
         toString() {
             return '0';
         },
-		[Symbol.toPrimitive]() {
+        [Symbol.toPrimitive]() {
             return 2;
         }
     }
@@ -125,7 +125,7 @@
 };
 
 {
-    // ES5寄生组合继承
+    // ES5组合继承
     const Parent = function(value) {
         this.value = value;
     };
@@ -146,6 +146,36 @@
             writable: true,
             configurable: true
         }
+    });
+
+    const child = new Child('yuuhei');
+
+    child.getValue();
+};
+
+{
+    // ES5寄生组合继承（不支持Object.create时可以使用）
+    const Parent = function(value) {
+        this.value = value;
+    }
+
+    Parent.prototype.getValue = function() {
+        console.log(this.value);
+    }
+
+    const Child = function(value) {
+        Parent.call(this, value);
+    }
+
+    const Super = function() {};
+    Super.prototype = Parent.prototype;
+    Child.prototype = new Super();
+
+    Object.defineProperty(Child.prototype, 'constructor', {
+        value: Child,
+        writable: false,
+        enumerable: false,
+        configurable: false
     });
 
     const child = new Child('yuuhei');
