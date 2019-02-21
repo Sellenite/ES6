@@ -35,7 +35,7 @@ class Timer {
 
 const timer = new Timer();
 
-timer.cownDown(+new Date('2019/02/21'), timeObj => {
+timer.cownDown(+new Date('2019/03/22'), timeObj => {
     let str = `${timeObj.left_days}天${timeObj.left_hours}时${timeObj.left_minutes}分${timeObj.left_seconds}秒`;
     let el = document.querySelector('#timer');
     el.innerText = str;
