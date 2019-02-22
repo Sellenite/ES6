@@ -38,6 +38,7 @@
     "webpack-dev-server": "2.9.7"
   },
   "dependencies": {
+    "snabbdom": "^0.7.3",
     "xss": "^1.0.3"
   }
 }

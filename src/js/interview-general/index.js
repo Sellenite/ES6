@@ -4,6 +4,7 @@ import './promise.js';
 import './security.js';
 import './responsive.js';
 import './zepto.js';
+import './vdom.js';
 import './leetCode.js';
 import './timer.js';
 console.log('<!--------Above is Latest-------->');
