@@ -6,6 +6,7 @@ import './responsive.js';
 import './zepto.js';
 import './vdom.js';
 import './leetCode.js';
+import './cors.js';
 import './timer.js';
 console.log('<!--------Above is Latest-------->');
 console.log('<!--------Below is ASYNC--------->');
