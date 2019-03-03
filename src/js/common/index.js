@@ -13,6 +13,7 @@ class Client {
     }
 
     request(url = '', data = {}) {
+        const _this = this;
         return new Promise((resolve, reject) => {
             $.ajax({
                 type: 'post',
@@ -29,6 +30,7 @@ class Client {
                 // 发送json，模拟非简单请求
                 contentType: 'appliation/json;charset=utf-8',
                 success(res) {
+                    console.log(`request ${_this.host + url}`)
                     typeof resolve === 'function' && resolve(res);
                 },
                 error(err) {
@@ -40,6 +42,6 @@ class Client {
 }
 
 // 反向代理时统一添加的前缀host
-let client = new Client('/server');
+let client = new Client('');
 
 window.client = client;

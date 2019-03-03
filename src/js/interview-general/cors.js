@@ -1,6 +1,6 @@
 // let url = 'http://localhost:3000/users';
 // 使用nginx的vhost
-let url = '/users';
+let url = '/users.do';
 
 let data = {
 	a: 1,
