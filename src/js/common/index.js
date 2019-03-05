@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import './he.js';
+import './domParse.js';
 
 class Client {
     constructor(host = '') {
