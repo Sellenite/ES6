@@ -1,6 +1,7 @@
 import './js-base.js';
 import './js-advanced.js';
 import './promise.js';
+import './xss.js';
 import './security.js';
 import './responsive.js';
 import './zepto.js';
