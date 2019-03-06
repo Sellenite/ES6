@@ -1,11 +1,11 @@
 /* 编码，过滤，校正，高度定制渲染内容 */
 /* 模拟后端拿回来的已经经过编码的字符串 */
-const str = '&lt;button onclick=&quot;alert(1)&quot;&gt;点击触发xss&lt;/button&gt;';
+const str = '&lt;button onclick=&quot;alert(1)&quot;&gt;点击触发xss&lt;/button&gt;';// dom改变引诱触发
 /* 以下为了方便不写编译过的字符串了，直接写原有字符串 */
-const str2 = '<img src="null" onerror="alert(1)" />';
-const str3 = '<a href="jAvAscRipt:alert(1)">点我跳转</a>';
+const str2 = '<img src="null" onerror="alert(1)" />'; // 立即执行
+const str3 = '<a href="jAvAscRipt:alert(1)">点我跳转</a>'; // 大小写这样依然能执行
 const str4 = '<script>alert(1)</script>'; // 直接innerHTML不会执行，只能通过appenChild
-const str5 = '<style>body { background-color: orange }</style>'
+const str5 = '<style>body { background-color: orange }</style>' // 改变背景颜色
 
 const parse = (str) => {
     let result = '';
@@ -64,3 +64,9 @@ const container = document.getElementById('xss');
 container.innerHTML = result;
 
 console.log(result);
+
+/* ----------------------------------------------------- */
+
+/* xss白名单过滤 */
+const xss = require("xss");
+console.log(xss('<script>alert("xss");</script>'));
