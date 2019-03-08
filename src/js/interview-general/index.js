@@ -1,6 +1,8 @@
 import './js-base.js';
 import './js-advanced.js';
 import './promise.js';
+import './promiseAll.js';
+import './promiseRace.js';
 import './responsive.js';
 import './zepto.js';
 import './vdom.js';
