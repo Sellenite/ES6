@@ -68,6 +68,16 @@ console.log(result);
 
 /* ----------------------------------------------------- */
 
-/* xss白名单过滤 */
+/* xss白名单过滤，文档：https://github.com/leizongmin/js-xss/blob/master/README.zh.md */
 const xss = require("xss");
-console.log(xss('<script>alert("xss");</script>'));
+
+const options = {
+    whiteList: {
+        a: ["href", "title", "target"]
+    }
+}
+
+/* 插件已经对以下攻击代码进行处理，放行href也是可以的 */
+const xss_a = '<a href="javascript:alert(1);">白名单a标签</a>'
+
+console.log(xss(xss_a, options));
