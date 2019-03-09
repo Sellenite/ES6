@@ -45,14 +45,15 @@ const parse = (str) => {
 
 /* 传统一刀切方法，将所有内容显示出来并以转以后的字符串形式显示出来 */
 const escapeStr = function(str) {
-    str = str.replace(/&/g, '&amp;')
-    str = str.replace(/</g, '&lt;')
-    str = str.replace(/>/g, '&gt;')
-    str = str.replace(/"/g, '&quot;')
-    str = str.replace(/'/g, '&#39;')
-    str = str.replace(/`/g, '&#96;')
-    str = str.replace(/\//g, '&#x2F;')
-    return str
+    str = str.replace(/&/g, '&amp;');
+    str = str.replace(/</g, '&lt;');
+    str = str.replace(/>/g, '&gt;');
+    str = str.replace(/"/g, '&quot;');
+    /* 参考，由于有些编码不是全部浏览器都支持，统一使用都支持的编码 */
+    str = str.replace(/'/g, '&#39;');
+    str = str.replace(/`/g, '&#96;');
+    str = str.replace(/\//g, '&#x2F;');
+    return str;
 }
 
 const result = parse(str5);
