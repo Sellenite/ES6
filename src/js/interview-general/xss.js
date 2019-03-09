@@ -75,9 +75,11 @@ const options = {
     whiteList: {
         a: ["href", "title", "target"]
     }
-}
+};
 
-/* 插件已经对以下攻击代码进行处理，放行href也是可以的 */
-const xss_a = '<a href="javascript:alert(1);">白名单a标签</a>'
+/* 插件已经对以下href的攻击代码进行处理，放行href也是可以的 */
+const xss_a = '<a href="javascript:alert(1);">白名单a标签</a>';
+/* 非白名单下会进行对符号的转义 */
+const xss_script = '<script>alert(1)</script>';
 
-console.log(xss(xss_a, options));
+console.log(xss(xss_script, options));
