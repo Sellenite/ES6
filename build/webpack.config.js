@@ -13,37 +13,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const WEBPACK_ENV = process.env.WEBPACK_ENV || 'dev';
 
-const getHtmlConfig = (name, title) => {
-    return {
-        template: './src/html/' + name + '.html',
-        filename: 'html/' + name + '.html',
-        title: title,
-        favicon: './favicon.ico',
-        // js文件插入到body最后
-        inject: true,
-        hash: true,
-        // 定义js，有公共的js需要写成数组，并且需要放在前面，否则使用key-value
-        // chunks: name，对应入口的name
-        chunks: ['common', name]
-    }
-};
+const Config = require('./config.js');
 
 module.exports = {
     devtool: false,
     // 采用多页面写法，对象的key是下面的name属性
-    entry: {
-        'common': ['./src/js/common/index.js'],
-        'youDontKnowJS': ['./src/js/youDontKnowJS/index.js'],
-        'DOM': ['./src/js/DOM/index.js'],
-        'interview-general': ['./src/js/interview-general/index.js'],
-    },
+    entry: Config.entry,
     output: {
         // 输出文件
-        filename: 'js/[name].js',
+        filename: 'js/[name].[hash].js',
         // 指定资源文件引用的目录，会加在资源路径的前面，dev-server模式时需要定义一个，线上时需要定义线上的目录
         publicPath: '/dist/',
         // 输出文件地址，__dirname是获得当前config文件的绝对路径
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, '../dist')
     },
     module: {
         rules: [
@@ -131,16 +113,14 @@ module.exports = {
     },
     plugins: [
         // 处理html文件的插件
-        new HtmlWebpackPlugin(getHtmlConfig('youDontKnowJS', 'youDontKnowJS')),
-        new HtmlWebpackPlugin(getHtmlConfig('DOM', 'DOM')),
-        new HtmlWebpackPlugin(getHtmlConfig('interview-general', 'interview-general')),
+        ...Config.plugins,
         // 处理提取独立css的插件
         new ExtractTextPlugin('css/[name].css'),
-        // 处理提取公共模块的插件，webpack自带，引用次数大于一定次数就会被加入进来
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            filename: 'js/base.js'
-        }),
+        // // 处理提取公共模块的插件，webpack自带，引用次数大于一定次数就会被加入进来
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     name: 'common',
+        //     filename: 'js/base.js'
+        // }),
         new webpack.SourceMapDevToolPlugin({
             filename: 'sourcemaps/[file].map',
             publicPath: '/dist/',
