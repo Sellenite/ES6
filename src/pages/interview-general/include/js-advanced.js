@@ -106,6 +106,18 @@
         return typeof result === 'object' ? result : obj;
     }
 
+    // 不使用__proto__
+    const create2 = function(Foo, ...args) {
+        const obj = Object.create(Foo.prototype);
+        const result = Foo.apply(obj, args);
+        if (typeof result === 'object') {
+            return result;
+        } else {
+            // 构造函数不返回对象时执行，一般情况下是执行这行
+            return obj;
+        }
+    }
+
     const Obj = function(name) {
         this.name = name;
     }
