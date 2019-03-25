@@ -94,7 +94,7 @@
 
 {
     // new实现原理
-    const create = function() {
+    const myNew = function() {
         // 创建一个对象
         const obj = {};
         const Constructor = [].shift.call(arguments);
@@ -107,7 +107,7 @@
     }
 
     // 不使用__proto__
-    const create2 = function(Foo, ...args) {
+    const myNew2 = function(Foo, ...args) {
         const obj = Object.create(Foo.prototype);
         const result = Foo.apply(obj, args);
         if (typeof result === 'object') {
@@ -122,10 +122,19 @@
         this.name = name;
     }
 
-    const obj = create(Obj, 'yuuhei');
+    const obj = myNew(Obj, 'yuuhei');
 
     console.log(obj.name);
 };
+
+{
+    // Object.create实现原理
+    const myCreate = function(obj) {
+        let F = function() {};
+        F.prototype = obj;
+        return new F();
+    }
+}
 
 {
     // instanceof实现原理，本质是遍历原型链
