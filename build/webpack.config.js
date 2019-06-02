@@ -41,6 +41,8 @@ module.exports = {
                         plugins: [
                             // 使用generator需要支持的插件，不用使用babel-polyfill，体积太大了
                             'transform-runtime',
+                            // 使用装饰器需要安装这个插件
+                            'transform-decorators-legacy',
                             // babel默认不支持原生构造函数的继承，需要插件支持
                             ["babel-plugin-transform-builtin-extend", {
                                 globals: ["Error", "Array"],
