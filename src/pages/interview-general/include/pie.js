@@ -41,6 +41,7 @@ const data = [
 let curTotalAngle = 0;
 let r = Math.PI / 180; // 用于弧度转换
 let total = 0;
+let curHoverIndex;
 
 data.forEach((item, index) => {
   total += Number(item.num);
@@ -55,8 +56,9 @@ data.forEach((item, index) => {
 });
 
 // 起始弧度和结束弧度都减了Math.PI/2，是因为0弧度是在x轴的正方向，也就是右边，
-// 但是一般我们认为的起点在顶部，所以减掉1/4圆让它的起点移到顶部
-function renderPie() {
+// 但是一般我们认为的起点在顶部，所以减掉1/4圆让它的起点移到顶部 x+π/2=已知，所以是x=已知-π/2，是减法
+function renderPie(checkHover, x, y) {
+  let hoverIndex = null; // ++
   data.forEach((item, index) => {
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -64,8 +66,20 @@ function renderPie() {
     let startRadian = item.radian[0] - (Math.PI / 2);
     let endRadian = item.radian[1] - (Math.PI / 2);
     ctx.arc(0, 0, radius, startRadian, endRadian);
-    ctx.fill();
+    // ctx.fill(); --
+    // ++
+    if (checkHover) {
+      if (hoverIndex === null && ctx.isPointInPath(x, y)) {
+        hoverIndex = index;
+      }
+    } else {
+      ctx.fill();
+    }
   });
+  // ++
+  if (checkHover) {
+    return hoverIndex;
+  }
 }
 
 // 动画曲线函数，更多函数可参考：http://robertpenner.com/easing/
@@ -132,3 +146,22 @@ move(-0.5, 1.5, 1000, (cur) => {
   renderPie();
   ctx.restore();
 });
+
+function onCanvasMousemove(e) {
+  let rect = canvas.getBoundingClientRect();
+  let x = e.clientX - rect.left;
+  let y = e.clientY - rect.top;
+  curHoverIndex = getHoverAngleIndex(x, y);
+  if (curHoverIndex) {
+    console.log(curHoverIndex)
+  }
+}
+
+function getHoverAngleIndex(x, y) {
+  ctx.save();
+  let index = renderPie(true, x, y);
+  ctx.restore();
+  return index;
+}
+
+canvas.addEventListener('mousemove', onCanvasMousemove);
