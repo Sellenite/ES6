@@ -40,5 +40,5 @@ timer.cownDown(+new Date('2019/03/22'), timeObj => {
     let el = document.querySelector('#timer');
     el.innerText = str;
 }, () => {
-	alert('TimeOut!');
+	console.log('TimeOut!');
 });

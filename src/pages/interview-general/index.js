@@ -10,5 +10,6 @@ import './include/leetCode.js';
 import './include/cors.js';
 import './include/xss.js';
 import './include/timer.js';
+import './include/pie.js';
 console.log('<!--------Above is Latest-------->');
 console.log('<!--------Below is ASYNC--------->');
