@@ -152,7 +152,7 @@ function onCanvasMousemove(e) {
   let x = e.clientX - rect.left;
   let y = e.clientY - rect.top;
   curHoverIndex = getHoverAngleIndex(x, y);
-  if (curHoverIndex) {
+  if (curHoverIndex != null) {
     console.log(curHoverIndex)
   }
 }
